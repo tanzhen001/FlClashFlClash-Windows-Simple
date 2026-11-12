@@ -1,0 +1,35 @@
+name: Windows interface preview
+
+on:
+  push:
+    branches:
+      - codex/windows-ui-preview
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch core assets
+        shell: bash
+        run: git -c url.https://github.com/.insteadOf=git@github.com: submodule update --init --recursive --depth 1
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.6'
+          cache: true
+      - run: flutter pub get
+      - name: Render Windows interface
+        shell: pwsh
+        run: |
+          $original = Get-Content pubspec.yaml -Raw
+          $original.Replace('build_assets: true', 'build_assets: false') | Set-Content pubspec.yaml -Encoding utf8
+          flutter test tool/windows_preview_test.dart --reporter expanded
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-interface-preview
+          path: build/ui-preview/*.png
+          if-no-files-found: error
