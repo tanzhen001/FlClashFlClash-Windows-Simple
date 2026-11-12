@@ -50,6 +50,9 @@ void main() {
       );
       addTearDown(container.dispose);
       globalState.container = container;
+      container
+          .read(themeSettingProvider.notifier)
+          .update((state) => state.copyWith(fontFamily: 'PreviewFont'));
       navigationPort = navigation;
       addTearDown(() => navigationPort = null);
       container.read(viewSizeProvider.notifier).value = size;
@@ -73,10 +76,7 @@ void main() {
           child: Consumer(
             builder: (_, ref, _) => TestApp(
               locale: const Locale('en'),
-              theme: watchAppTheme(ref, brightness).copyWith(
-                fontFamily: 'PreviewFont',
-                fontFamilyFallback: const ['PreviewFont'],
-              ),
+              theme: watchAppTheme(ref, brightness),
               child: RepaintBoundary(key: boundaryKey, child: const HomePage()),
             ),
           ),
