@@ -17,6 +17,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../test/helpers/test_app.dart';
+import '../test/helpers/app_paths.dart';
+import '../test/helpers/preferences.dart';
 import '../test/helpers/test_profiles.dart';
 
 void main() {
@@ -27,12 +29,18 @@ void main() {
     autoUpdateDuration: Duration.zero,
   );
 
+  late Directory temporary;
   setUpAll(() async {
+    temporary = await Directory.systemTemp.createTemp('flclash-preview-');
+    await useAppPaths(temporary);
+    await mockPreferences();
     final bytes = await File('C:/Windows/Fonts/segoeui.ttf').readAsBytes();
     await (FontLoader(
       'PreviewFont',
     )..addFont(Future.value(ByteData.sublistView(bytes)))).load();
   });
+
+  tearDownAll(() => temporary.deleteSync(recursive: true));
 
   for (final (name, size, brightness) in [
     ('desktop-light', const Size(1080, 900), Brightness.light),

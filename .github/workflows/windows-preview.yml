@@ -30,6 +30,7 @@ jobs:
           flutter test tool/windows_preview_test.dart --reporter expanded
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: windows-interface-preview
           path: build/ui-preview/*.png
