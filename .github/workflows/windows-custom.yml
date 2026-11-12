@@ -1,0 +1,105 @@
+name: Windows simplified client
+
+on:
+  push:
+    branches:
+      - codex/windows-simple
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Windows ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x64
+            runner: windows-2022
+            channel: stable
+          - arch: arm64
+            runner: windows-11-arm
+            channel: master
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch the pinned core source
+        shell: bash
+        run: |
+          git config --global core.longpaths true
+          if git ls-files --stage core/Clash.Meta | grep -q '^160000 '; then
+            git submodule set-url core/Clash.Meta https://github.com/chen08209/Clash.Meta.git
+            git submodule update --init --recursive
+          fi
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.27.1'
+
+      - name: Install Rust on ARM64
+        if: matrix.arch == 'arm64'
+        shell: pwsh
+        run: |
+          Invoke-WebRequest https://win.rustup.rs/aarch64 -OutFile rustup-init.exe
+          .\rustup-init.exe -y --default-toolchain stable
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          "$env:USERPROFILE\.cargo\bin" >> $env:GITHUB_PATH
+
+      - name: Install Rust on x64
+        if: matrix.arch == 'x64'
+        uses: dtolnay/rust-toolchain@stable
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.6'
+          channel: ${{ matrix.channel }}
+          cache: true
+
+      - name: Set up packaging tools
+        shell: pwsh
+        run: |
+          if (!(Test-Path "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe")) {
+            choco install innosetup -y --no-progress
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+          "${env:ProgramFiles(x86)}\Inno Setup 6" >> $env:GITHUB_PATH
+          "$env:LOCALAPPDATA\Pub\Cache\bin" >> $env:GITHUB_PATH
+
+      - name: Fetch pinned certificate bundle
+        shell: bash
+        run: |
+          bundle=core/Clash.Meta/component/ca/ca-certificates.crt
+          curl -fsSL --retry 3 -o "$bundle" https://curl.se/ca/cacert-2026-09-25.pem
+          echo "a41b5d356aea97a529fe27e0f7316d2f9d946d75927476cf9cf1b90637d00505  $bundle" | sha256sum -c -
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Analyze the client
+        run: flutter analyze --no-fatal-infos
+
+      - name: Test the simplified interface
+        shell: pwsh
+        run: |
+          $original = Get-Content pubspec.yaml -Raw
+          try {
+            $original.Replace('build_assets: true', 'build_assets: false') | Set-Content pubspec.yaml -Encoding utf8
+            flutter test test/views/dashboard/windows_dashboard_test.dart
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          } finally {
+            [System.IO.File]::WriteAllText((Join-Path $PWD 'pubspec.yaml'), $original)
+          }
+
+      - name: Build installer and portable package
+        run: dart setup.dart windows --targets exe,zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FlClash-simplified-windows-${{ matrix.arch }}
+          path: |
+            dist/**/*.exe
+            dist/**/*.zip
+          if-no-files-found: error

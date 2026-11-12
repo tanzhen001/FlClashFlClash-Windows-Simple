@@ -16,6 +16,7 @@ import 'style.dart';
 import 'widget_registry.dart';
 import 'widgets/core_status_button.dart';
 import 'widgets/widgets.dart';
+import 'windows_dashboard.dart';
 
 // Narrower columns leave a pair of service cells too tight for a status, so
 // the grid stacks them in one.
@@ -47,6 +48,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   @override
   Widget build(BuildContext context) {
     final platform = widget.platform ?? SupportPlatform.currentPlatform;
+    if (platform == SupportPlatform.Windows) {
+      return const WindowsDashboardView();
+    }
     final viewSize = ref.watch(viewSizeProvider);
     final sideWidth = ref.watch(sideWidthProvider);
     final scale = math.max(1.0, MediaQuery.textScalerOf(context).scale(1));

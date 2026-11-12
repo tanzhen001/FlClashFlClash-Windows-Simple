@@ -90,7 +90,9 @@ class _ToolViewState extends ConsumerState<ToolsView> {
       _getOtherList(developerMode),
     ];
     return CommonScaffold(
-      title: context.appLocalizations.tools,
+      title: system.isWindows
+          ? context.appLocalizations.settings
+          : context.appLocalizations.tools,
       body: Builder(
         builder: (context) => ListView.builder(
           key: toolsStoreKey,

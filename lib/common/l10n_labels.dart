@@ -3,6 +3,7 @@ import 'package:fl_clash/ui/color.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'app_localizations.dart';
+import 'system.dart';
 
 extension PageLabelL10n on PageLabel {
   String get label {
@@ -11,7 +12,8 @@ extension PageLabelL10n on PageLabel {
       PageLabel.dashboard => appLocalizations.dashboard,
       PageLabel.proxies => appLocalizations.proxies,
       PageLabel.profiles => appLocalizations.profiles,
-      PageLabel.tools => appLocalizations.tools,
+      PageLabel.tools =>
+        system.isWindows ? appLocalizations.settings : appLocalizations.tools,
       PageLabel.logs => appLocalizations.logs,
       PageLabel.requests => appLocalizations.recentRequests,
       PageLabel.resources => appLocalizations.resources,

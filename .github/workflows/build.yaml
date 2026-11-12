@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - '**'
+      - '!codex/windows-simple'
     tags:
       - 'v*'
   workflow_dispatch:

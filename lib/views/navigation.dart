@@ -12,7 +12,11 @@ class Navigation implements NavigationPort {
   List<NavigationItem> getItems({
     bool openLogs = false,
     bool hasProxies = false,
+    SupportPlatform? platform,
   }) {
+    final windows =
+        (platform ?? SupportPlatform.currentPlatform) ==
+        SupportPlatform.Windows;
     return [
       NavigationItem(
         glyph: AppGlyphs.dashboard,
@@ -47,7 +51,9 @@ class Navigation implements NavigationPort {
         label: PageLabel.connections,
         builder: (_) =>
             const ConnectionsView(key: GlobalObjectKey(PageLabel.connections)),
-        modes: [NavigationItemMode.desktop, NavigationItemMode.moreFull],
+        modes: windows
+            ? [NavigationItemMode.moreFull]
+            : [NavigationItemMode.desktop, NavigationItemMode.moreFull],
       ),
       NavigationItem(
         glyph: AppGlyphs.dns,
@@ -68,11 +74,13 @@ class Navigation implements NavigationPort {
         label: PageLabel.logs,
         builder: (_) => const LogsView(key: GlobalObjectKey(PageLabel.logs)),
         modes: openLogs
-            ? [NavigationItemMode.desktop, NavigationItemMode.more]
+            ? windows
+                  ? [NavigationItemMode.more]
+                  : [NavigationItemMode.desktop, NavigationItemMode.more]
             : [],
       ),
       NavigationItem(
-        glyph: AppGlyphs.tools,
+        glyph: windows ? AppGlyphs.settings : AppGlyphs.tools,
         label: PageLabel.tools,
         builder: (_) => const ToolsView(key: GlobalObjectKey(PageLabel.tools)),
         modes: [NavigationItemMode.desktop, NavigationItemMode.mobile],
