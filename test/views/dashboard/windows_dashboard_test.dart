@@ -1,4 +1,3 @@
-import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
@@ -110,7 +109,9 @@ void main() {
   testWidgets('the connection control delegates start and stop', (
     tester,
   ) async {
-    container.read(profilesProvider.notifier).put(const Profile(id: 1));
+    container
+        .read(profilesProvider.notifier)
+        .put(const Profile(id: 1, autoUpdateDuration: Duration.zero));
     container.read(coreStatusProvider.notifier).value = CoreStatus.connected;
     await pumpDashboard(tester);
 
@@ -130,7 +131,9 @@ void main() {
   testWidgets('connecting clears on failure and allows another attempt', (
     tester,
   ) async {
-    container.read(profilesProvider.notifier).put(const Profile(id: 1));
+    container
+        .read(profilesProvider.notifier)
+        .put(const Profile(id: 1, autoUpdateDuration: Duration.zero));
     container.read(coreStatusProvider.notifier).value = CoreStatus.connecting;
     await pumpDashboard(tester);
     expect(tester.widget<IconButton>(toggle()).onPressed, isNull);
