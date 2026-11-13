@@ -87,7 +87,10 @@ Future<ProviderContainer> _pumpHome(
   await tester.pumpWidget(
     UncontrolledProviderScope(
       container: container,
-      child: const TestApp(includeNavigatorKey: false, child: HomePage(platform: SupportPlatform.Android)),
+      child: const TestApp(
+        includeNavigatorKey: false,
+        child: HomePage(platform: SupportPlatform.Android),
+      ),
     ),
   );
   if (settle) {

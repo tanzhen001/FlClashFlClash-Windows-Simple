@@ -37,6 +37,16 @@ Windows 准备 Flutter 3.47.6、Go 1.27.1、Rust MSVC、Git、Visual Studio 的 
 也可使用 `.github/workflows/windows-custom.yml`，输出 x64 和 ARM64 安装包及便携包。
 工作流生成本地化和 provider 代码、格式化、执行静态分析、运行相关测试并渲染中文界面。
 
+## 本次自动化验证
+
+Windows x64 和 ARM64 均通过依赖解析、本地化及 provider 代码生成、静态分析、相关逻辑和界面测试。
+x64 另通过完整 `test/widgets` 控件回归。浅色、深色和宽窗口的中文界面均完成渲染及人工截图检查。
+全仓所有平台的测试套件未执行。
+
+构建输入提交为 `c923cd8a3a86c405916812e5de84ef4386c9a6ad`。
+
+https://github.com/tanzhen001/FlClashFlClash-Windows-Simple/actions/runs/43358560961
+
 ## 验证边界
 
 自动化测试验证界面、模式请求、全局默认出口、模式失败恢复、快速切换和流量重置。

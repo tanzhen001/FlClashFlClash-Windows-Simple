@@ -23,7 +23,8 @@ class HomePage extends ConsumerWidget {
     if (!hasViewSize) {
       return const SizedBox.shrink();
     }
-    if ((platform ?? SupportPlatform.currentPlatform) == SupportPlatform.Windows) {
+    if ((platform ?? SupportPlatform.currentPlatform) ==
+        SupportPlatform.Windows) {
       return const HomeBackScopeContainer(child: WindowsDashboardView());
     }
     return HomeBackScopeContainer(
