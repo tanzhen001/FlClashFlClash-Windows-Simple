@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fl_clash/providers/action.dart';
 import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
@@ -64,6 +66,18 @@ Future<void> tapCancel(WidgetTester tester) async {
 }
 
 void main() {
+  if (Platform.isWindows) {
+    testWidgets('software updates cannot open a dialog on Windows', (tester) async {
+      final container = await pumpApp(tester);
+      await container.read(commonActionProvider.notifier).checkUpdateResultHandle(data: release(null), isUser: true);
+      await tester.pump();
+      expect(find.text('Go download'), findsNothing);
+      expect(await container.read(commonActionProvider.notifier).autoCheckUpdate(), isFalse);
+      expect(tester.takeException(), isNull);
+    });
+    return;
+  }
+
   setUpAll(() {
     globalState.packageInfo = PackageInfo(
       appName: 'FlClash',

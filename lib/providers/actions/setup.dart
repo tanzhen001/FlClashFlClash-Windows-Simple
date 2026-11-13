@@ -39,6 +39,8 @@ class SetupAction extends _$SetupAction {
   Timer? _runtimeTimer;
   final _setupScheduler = SerialTaskScheduler();
   final _listenerScheduler = SerialTaskScheduler();
+  final _modeScheduler = SerialTaskScheduler();
+  int _modeRevision = 0;
   _RunRequest? _latestRunRequest;
   DateTime? _startTime;
   _SetupInputs? _appliedInputs;
@@ -237,8 +239,7 @@ class SetupAction extends _$SetupAction {
       return true;
     }
     resetCoreTraffic();
-    ref.read(trafficsProvider.notifier).clear();
-    ref.read(totalTrafficProvider.notifier).value = const Traffic();
+    ref.read(commonActionProvider.notifier).clearTrafficStatistics();
     // A silent Core is gone or hung; running again would proxy traffic to it.
     if (!answered) {
       throw _unanswered(CoreMethod.stopListener);
@@ -316,7 +317,9 @@ class SetupAction extends _$SetupAction {
 
   @protected
   void resetCoreTraffic() {
-    _core.resetTraffic();
+    unawaited(_core.resetTraffic().catchError((Object error) {
+      commonPrint.log('Reset traffic failed: $error', logLevel: coreFailureLogLevel(error));
+    }));
   }
 
   @visibleForTesting
@@ -366,15 +369,50 @@ class SetupAction extends _$SetupAction {
     );
   }
 
-  void changeMode(Mode mode) {
-    ref
-        .read(patchClashConfigProvider.notifier)
-        .update((state) => state.copyWith(mode: mode));
+  Future<void> changeMode(Mode mode) async {
+    final previous = ref.read(patchClashConfigProvider).mode;
+    if (previous == mode) return;
+    final revision = ++_modeRevision;
+    final previousGroup = ref.read(currentProfileProvider)?.currentGroupName;
+    ref.read(patchClashConfigProvider.notifier).update((state) => state.copyWith(mode: mode));
     if (mode == Mode.global) {
-      ref
-          .read(proxiesActionProvider.notifier)
-          .updateCurrentGroupName(GroupName.GLOBAL.name);
+      ref.read(proxiesActionProvider.notifier).updateCurrentGroupName('GLOBAL');
     }
+    if (ref.read(coreStatusProvider) != CoreStatus.connected || ref.read(safeModeProvider)) return;
+    await _modeScheduler.run(() async {
+      if (revision != _modeRevision) return;
+      try {
+        if (mode == Mode.global) {
+          final groups = ref.read(groupsProvider);
+          final global = groups.getGroup('GLOBAL');
+          final profile = ref.read(currentProfileProvider);
+          final saved = profile?.selectedMap['GLOBAL'];
+          if (global != null && (saved == null || !global.all.any((proxy) => proxy.name == saved))) {
+            final candidates = global.all.where((proxy) => !{'DIRECT', 'REJECT', 'REJECT-DROP', 'PASS', 'GLOBAL'}.contains(proxy.name));
+            final target = candidates.where((proxy) => proxy.name == previousGroup).firstOrNull ?? candidates.firstOrNull;
+            if (target != null) {
+              final result = await _core.changeProxy(ChangeProxyParams(groupName: 'GLOBAL', proxyName: target.name));
+              if (result.message.isNotEmpty) throw MessageException(result.message);
+              ref.read(profilesActionProvider.notifier).updateCurrentSelectedMap('GLOBAL', target.name);
+            }
+          }
+        }
+        if (revision != _modeRevision) return;
+        final message = await _core.updateConfig(_effectivePatchConfig(ref.read(patchClashConfigProvider)).toUpdateParams(
+          authentication: ref.read(networkSettingProvider).authentication.credentials,
+          skipCertVerify: !ref.read(appSettingProvider).checkCertificate,
+        ));
+        if (message.isNotEmpty) throw MessageException(message);
+        // Existing sockets retain their old route until they reconnect.
+        if (revision == _modeRevision && ref.read(isStartProvider)) await _core.closeConnections();
+      } catch (_) {
+        if (revision == _modeRevision) {
+          ref.read(patchClashConfigProvider.notifier).update((state) => state.copyWith(mode: previous));
+          if (previousGroup != null) ref.read(proxiesActionProvider.notifier).updateCurrentGroupName(previousGroup);
+        }
+        rethrow;
+      }
+    });
   }
 
   /// For leaving an editor: a profile whose inputs match the config the Core

@@ -26,6 +26,7 @@ class AboutView extends ConsumerWidget {
   ];
 
   Future<void> _checkUpdate(BuildContext context, WidgetRef ref) async {
+    if (system.isWindows) return;
     if (ref.read(loadingProvider(LoadingTag.checkUpdate))) return;
     final commonAction = ref.read(commonActionProvider.notifier);
     final result = await globalState.loadingRun(
@@ -201,7 +202,7 @@ class _AboutHero extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          TonalButton(
+          if (!system.isWindows) TonalButton(
             size: TonalButtonSize.bar,
             glyph: AppGlyphs.sync,
             label: appLocalizations.checkUpdate,

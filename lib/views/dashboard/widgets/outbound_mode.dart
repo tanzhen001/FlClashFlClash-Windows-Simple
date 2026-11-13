@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/state.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
@@ -18,7 +21,7 @@ Glyph _glyphOf(Mode mode) => switch (mode) {
 
 void _changeMode(WidgetRef ref, Mode mode) {
   if (ref.read(patchClashConfigProvider).mode == mode) return;
-  ref.read(setupActionProvider.notifier).changeMode(mode);
+  unawaited(globalState.safeRun(() => ref.read(setupActionProvider.notifier).changeMode(mode)));
 }
 
 class OutboundModeCard extends ConsumerWidget {

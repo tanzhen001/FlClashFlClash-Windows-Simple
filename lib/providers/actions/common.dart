@@ -38,27 +38,50 @@ class CommonAction extends _$CommonAction {
   }
 
   void updateMode() {
-    ref.read(patchClashConfigProvider.notifier).update((state) {
-      final index = Mode.values.indexWhere((item) => item == state.mode);
-      if (index == -1) return state;
-      final nextIndex = index + 1 > Mode.values.length - 1 ? 0 : index + 1;
-      return state.copyWith(mode: Mode.values[nextIndex]);
-    });
+    final mode = ref.read(patchClashConfigProvider).mode;
+    final next = Mode.values[(Mode.values.indexOf(mode) + 1) % Mode.values.length];
+    unawaited(globalState.safeRun(() => ref.read(setupActionProvider.notifier).changeMode(next)));
+  }
+
+  int _trafficRevision = 0;
+  bool _resettingTraffic = false;
+
+  Future<void> resetTrafficStatistics() async {
+    if (_resettingTraffic) return;
+    _resettingTraffic = true;
+    _trafficRevision++;
+    try {
+      if (ref.read(coreStatusProvider) == CoreStatus.connected && !ref.read(safeModeProvider)) {
+        await _core.resetTraffic();
+      }
+      if (!ref.mounted) return;
+      clearTrafficStatistics();
+    } finally {
+      _resettingTraffic = false;
+    }
+  }
+
+  void clearTrafficStatistics() {
+    _trafficRevision++;
+    ref.read(trafficsProvider.notifier).clear();
+    ref.read(totalTrafficProvider.notifier).value = const Traffic();
   }
 
   Future<void> updateTraffic() async {
-    if (_isUpdatingTraffic) {
+    if (_isUpdatingTraffic || _resettingTraffic) {
       return;
     }
     _isUpdatingTraffic = true;
+    final revision = _trafficRevision;
     try {
-      final onlyStatisticsProxy = ref.read(
+      final onlyStatisticsProxy = system.isWindows ? false : ref.read(
         appSettingProvider.select((state) => state.onlyStatisticsProxy),
       );
       final [traffic, totalTraffic] = await Future.wait([
         _readTraffic(() => _core.getTraffic(onlyStatisticsProxy)),
         _readTraffic(() => _core.getTotalTraffic(onlyStatisticsProxy)),
       ]);
+      if (!ref.mounted || revision != _trafficRevision) return;
       if (traffic != null) {
         ref.read(trafficsProvider.notifier).addTraffic(traffic);
       }
@@ -83,6 +106,7 @@ class CommonAction extends _$CommonAction {
   }
 
   Future<bool> autoCheckUpdate() async {
+    if (system.isWindows) return false;
     if (!ref.read(appSettingProvider).autoCheckUpdate) return false;
     final Map<String, dynamic>? res;
     try {
@@ -146,6 +170,7 @@ class CommonAction extends _$CommonAction {
     Map<String, dynamic>? data,
     bool isUser = false,
   }) async {
+    if (system.isWindows) return;
     if (data != null) {
       final context = globalState.navigatorKey.currentContext!;
       final res = await dialogs.showMessage(

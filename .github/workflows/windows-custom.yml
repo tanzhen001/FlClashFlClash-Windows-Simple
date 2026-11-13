@@ -78,6 +78,22 @@ jobs:
       - name: Resolve dependencies
         run: flutter pub get
 
+      - name: Generate locale and provider output
+        shell: pwsh
+        run: |
+          $original = Get-Content pubspec.yaml -Raw
+          try {
+            $original.Replace('build_assets: true', 'build_assets: false') | Set-Content pubspec.yaml -Encoding utf8
+            dart run intl_utils:generate
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            dart run build_runner build --delete-conflicting-outputs
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          } finally {
+            [System.IO.File]::WriteAllText((Join-Path $PWD 'pubspec.yaml'), $original)
+          }
+          dart format lib test tool
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
       - name: Analyze the client
         run: flutter analyze --no-fatal-infos
 
@@ -87,11 +103,37 @@ jobs:
           $original = Get-Content pubspec.yaml -Raw
           try {
             $original.Replace('build_assets: true', 'build_assets: false') | Set-Content pubspec.yaml -Encoding utf8
-            flutter test test/views/dashboard/windows_dashboard_test.dart
+            flutter test test/views/dashboard/windows_dashboard_test.dart test/providers/windows_runtime_test.dart test/providers/setup_action_test.dart test/core/interface_message_test.dart test/core/controller_test.dart test/l10n test/lint/dynamic_message_key_test.dart
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            flutter test tool/windows_preview_test.dart
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           } finally {
             [System.IO.File]::WriteAllText((Join-Path $PWD 'pubspec.yaml'), $original)
           }
+
+      - name: Test shared widgets
+        if: matrix.arch == 'x64'
+        shell: pwsh
+        run: |
+          $original = Get-Content pubspec.yaml -Raw
+          try {
+            $original -replace '(?s)(setup:\s+build_assets:) true', '$1 false' | Set-Content pubspec.yaml -Encoding utf8
+            flutter test test/widgets
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          } finally {
+            [System.IO.File]::WriteAllText((Join-Path $PWD 'pubspec.yaml'), $original)
+          }
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Windows-validation-${{ matrix.arch }}
+          path: |
+            build/ui-preview/*.png
+            lib/**/*.dart
+            test/**/*.dart
+            tool/windows_preview_test.dart
+          if-no-files-found: error
 
       - name: Build installer and portable package
         run: dart setup.dart windows --targets exe,zip

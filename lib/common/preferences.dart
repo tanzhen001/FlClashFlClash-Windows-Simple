@@ -36,6 +36,16 @@ class Preferences {
     return _instance!;
   }
 
+  Future<bool> getCompactWindowApplied() async {
+    final store = await _store.value;
+    return store?.getBool('compactWindowsLayoutV2') ?? false;
+  }
+
+  Future<void> setCompactWindowApplied() async {
+    final store = await _store.value;
+    await store?.setBool('compactWindowsLayoutV2', true);
+  }
+
   Future<int> getVersion() async {
     final preferences = await _store.value;
     return preferences?.getInt('version') ?? 0;

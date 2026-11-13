@@ -963,5 +963,8 @@
   "preferred": "Preferido",
   "addToLocalProxies": "Añadir a proxies locales",
   "addedToLocalProxies": "{name} añadido a proxies locales",
-  "alreadyInLocalProxies": "{name} ya está en proxies locales"
+  "alreadyInLocalProxies": "{name} ya está en proxies locales",
+  "nodeSelection": "Selección de nodo",
+  "resetTrafficStatistics": "Restablecer tráfico",
+  "resetTrafficStatisticsTip": "¿Restablecer los contadores de este dispositivo? El consumo de la suscripción no cambia."
 }

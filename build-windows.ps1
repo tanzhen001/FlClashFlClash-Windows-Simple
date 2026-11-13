@@ -18,13 +18,15 @@ $env:PATH += ";$env:LOCALAPPDATA\Pub\Cache\bin;${env:ProgramFiles(x86)}\Inno Set
 
 flutter pub get
 if ($LASTEXITCODE -ne 0) { throw 'Dependency resolution failed.' }
+dart run intl_utils:generate
+if ($LASTEXITCODE -ne 0) { throw 'Locale generation failed.' }
 flutter analyze --no-fatal-infos
 if ($LASTEXITCODE -ne 0) { throw 'Static analysis failed.' }
 
 $original = Get-Content pubspec.yaml -Raw
 try {
     $original.Replace('build_assets: true', 'build_assets: false') | Set-Content pubspec.yaml -Encoding utf8
-    flutter test test/views/dashboard/windows_dashboard_test.dart
+    flutter test test/views/dashboard/windows_dashboard_test.dart test/providers/windows_runtime_test.dart test/core/interface_message_test.dart
     if ($LASTEXITCODE -ne 0) { throw 'Windows interface tests failed.' }
 } finally {
     [System.IO.File]::WriteAllText((Join-Path $PWD 'pubspec.yaml'), $original)

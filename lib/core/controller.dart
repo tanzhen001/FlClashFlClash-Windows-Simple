@@ -343,8 +343,8 @@ class CoreController {
     return _interface.getMemoryStats();
   }
 
-  void resetTraffic() {
-    _interface.resetTraffic();
+  Future<void> resetTraffic() async {
+    await _interface.resetTraffic();
   }
 
   void startLog() {

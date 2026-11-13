@@ -963,5 +963,8 @@
   "preferred": "Предпочтительный",
   "addToLocalProxies": "Добавить в локальные прокси",
   "addedToLocalProxies": "«{name}» добавлен в локальные прокси",
-  "alreadyInLocalProxies": "«{name}» уже есть в локальных прокси"
+  "alreadyInLocalProxies": "«{name}» уже есть в локальных прокси",
+  "nodeSelection": "Выбор узла",
+  "resetTrafficStatistics": "Сбросить статистику трафика",
+  "resetTrafficStatisticsTip": "Сбросить счётчики на этом устройстве? Использование подписки не изменится."
 }

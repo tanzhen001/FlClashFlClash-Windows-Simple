@@ -963,5 +963,8 @@
   "preferred": "Préféré",
   "addToLocalProxies": "Ajouter aux proxys locaux",
   "addedToLocalProxies": "{name} ajouté aux proxys locaux",
-  "alreadyInLocalProxies": "{name} est déjà dans les proxys locaux"
+  "alreadyInLocalProxies": "{name} est déjà dans les proxys locaux",
+  "nodeSelection": "Sélection du nœud",
+  "resetTrafficStatistics": "Réinitialiser le trafic",
+  "resetTrafficStatisticsTip": "Réinitialiser les compteurs de cet appareil ? Le quota de votre abonnement reste inchangé."
 }

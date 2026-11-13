@@ -963,5 +963,8 @@
   "preferred": "優先",
   "addToLocalProxies": "ローカルプロキシに追加",
   "addedToLocalProxies": "{name} をローカルプロキシに追加しました",
-  "alreadyInLocalProxies": "{name} はすでにローカルプロキシにあります"
+  "alreadyInLocalProxies": "{name} はすでにローカルプロキシにあります",
+  "nodeSelection": "ノード選択",
+  "resetTrafficStatistics": "通信量をリセット",
+  "resetTrafficStatisticsTip": "この端末の送受信カウンターをリセットしますか？契約の使用量は変更されません。"
 }

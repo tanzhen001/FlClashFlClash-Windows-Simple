@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:fl_clash/state.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/providers.dart';
@@ -181,7 +184,7 @@ class AppTray implements TrayPort {
             Mode.direct => HotAction.directMode,
           }),
           onSelected: () {
-            setupAction.changeMode(mode);
+            unawaited(globalState.safeRun(() => setupAction.changeMode(mode)));
           },
         ),
       const TrayMenuSeparator(),

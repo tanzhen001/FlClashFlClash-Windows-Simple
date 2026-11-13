@@ -963,5 +963,8 @@
   "preferred": "Preferred",
   "addToLocalProxies": "Add to local proxies",
   "addedToLocalProxies": "Added {name} to local proxies",
-  "alreadyInLocalProxies": "{name} is already in local proxies"
+  "alreadyInLocalProxies": "{name} is already in local proxies",
+  "nodeSelection": "Node selection",
+  "resetTrafficStatistics": "Reset traffic statistics",
+  "resetTrafficStatisticsTip": "Reset upload and download counters on this device? This does not reset your subscription usage."
 }

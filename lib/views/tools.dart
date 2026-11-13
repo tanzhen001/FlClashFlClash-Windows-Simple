@@ -42,7 +42,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
       items: [
         const _DisclaimerItem(),
         if (enableDeveloperMode) const _DeveloperItem(),
-        const _InfoItem(),
+        if (!system.isWindows) const _InfoItem(),
       ],
     );
   }
@@ -58,13 +58,13 @@ class _ToolViewState extends ConsumerState<ToolsView> {
         if (system.isDesktop) const _HotkeyItem(),
         if (system.isAndroid) const _AccessItem(),
         const _AdvancedConfigItem(),
-        const _CustomResourcesItem(),
+        if (!system.isWindows) const _CustomResourcesItem(),
         const _GeneralItem(),
       ],
       footer: [
         if (system.isAndroid) appLocalizations.accessControlDesc,
         appLocalizations.advancedConfigDesc,
-        appLocalizations.customProfileResourcesDesc,
+        if (!system.isWindows) appLocalizations.customProfileResourcesDesc,
       ].join('\n'),
     );
   }

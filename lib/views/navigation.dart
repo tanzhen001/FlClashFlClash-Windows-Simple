@@ -67,7 +67,7 @@ class Navigation implements NavigationPort {
         label: PageLabel.resources,
         builder: (_) =>
             const ResourcesView(key: GlobalObjectKey(PageLabel.resources)),
-        modes: [NavigationItemMode.more],
+        modes: windows ? [] : [NavigationItemMode.more],
       ),
       NavigationItem(
         glyph: AppGlyphs.logs,
