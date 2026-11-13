@@ -246,11 +246,11 @@ void main() {
       expect(config['sniffer']['sniff']['HTTP']['ports'], ['80', '443']);
       expect(
         config['proxy-providers']['remote']['path'],
-        startsWith('/profiles/providers/7/proxies/'),
+        startsWith('${join('/profiles', 'providers', '7', 'proxies')}$separator'),
       );
       expect(
         config['rule-providers']['remote']['path'],
-        startsWith('/profiles/providers/7/rules/'),
+        startsWith('${join('/profiles', 'providers', '7', 'rules')}$separator'),
       );
       expect(config['rules'], [
         'DOMAIN-SUFFIX,added.example,Original',
@@ -897,3 +897,4 @@ void main() {
     expect(encoded, contains('\n'));
   });
 }
+
