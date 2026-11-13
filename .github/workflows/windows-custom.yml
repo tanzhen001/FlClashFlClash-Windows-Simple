@@ -104,7 +104,7 @@ jobs:
           $original = Get-Content pubspec.yaml -Raw
           try {
             $original.Replace('build_assets: true', 'build_assets: false') | Set-Content pubspec.yaml -Encoding utf8
-            flutter test test/views/add_profile_view_test.dart test/views/dashboard/windows_dashboard_test.dart test/providers/windows_runtime_test.dart test/providers/setup_action_test.dart test/providers/common_action_test.dart test/core/interface_message_test.dart test/core/controller_test.dart test/common/request_test.dart test/l10n test/lint/dynamic_message_key_test.dart
+            flutter test test/common/task_test.dart test/views/add_profile_view_test.dart test/views/dashboard/windows_dashboard_test.dart test/providers/windows_runtime_test.dart test/providers/setup_action_test.dart test/providers/common_action_test.dart test/core/interface_message_test.dart test/core/controller_test.dart test/common/request_test.dart test/l10n test/lint/dynamic_message_key_test.dart
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           } finally {
             [System.IO.File]::WriteAllText((Join-Path $PWD 'pubspec.yaml'), $original)

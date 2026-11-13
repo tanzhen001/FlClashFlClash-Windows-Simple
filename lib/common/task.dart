@@ -114,6 +114,33 @@ Future<RealProfile> makeRealProfileTask(MakeRealProfileState data) async {
 
 Future<RealProfile> _makeRealProfileTask(MakeRealProfileState data) async {
   final rawConfig = Map.from(data.rawConfig);
+  final proxies = rawConfig['proxies'];
+  final groups = rawConfig['proxy-groups'];
+  final originalRules = rawConfig['rules'];
+  if (system.isWindows &&
+      proxies is List &&
+      proxies.isNotEmpty &&
+      (groups == null || groups is List && groups.isEmpty) &&
+      (originalRules == null || originalRules is List && originalRules.isEmpty) &&
+      (rawConfig['proxy-providers'] == null ||
+          rawConfig['proxy-providers'] is Map &&
+              (rawConfig['proxy-providers'] as Map).isEmpty)) {
+    final names = proxies
+        .whereType<Map>()
+        .map((proxy) => proxy['name'])
+        .whereType<String>()
+        .toList();
+    var groupName = 'PROXY';
+    while (names.contains(groupName)) {
+      groupName = '${groupName}_';
+    }
+    if (names.isNotEmpty) {
+      rawConfig['proxy-groups'] = [
+        {'name': groupName, 'type': 'select', 'proxies': names},
+      ];
+      rawConfig['rules'] = ['MATCH,$groupName'];
+    }
+  }
   final realPatchConfig = data.realPatchConfig;
   final profilesPath = data.profilesPath;
   final profileId = data.profileId;

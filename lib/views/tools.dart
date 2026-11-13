@@ -42,7 +42,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
       items: [
         const _DisclaimerItem(),
         if (enableDeveloperMode) const _DeveloperItem(),
-        const _InfoItem(),
+        if (!system.isWindows) const _InfoItem(),
       ],
     );
   }

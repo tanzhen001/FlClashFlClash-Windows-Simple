@@ -9,6 +9,38 @@ import 'package:path/path.dart';
 import 'package:yaml/yaml.dart';
 
 void main() {
+  test('Windows proxy-only imports get a selectable rule-mode group', () async {
+    if (!Platform.isWindows) return;
+    final state = MakeRealProfileState(
+      profilesPath: '/profiles',
+      profileId: 7,
+      rawConfig: {
+        'proxies': [
+          {'name': 'PROXY', 'type': 'ssr', 'server': 'example.com'},
+          {'name': 'HK', 'type': 'ssr', 'server': 'example.org'},
+        ],
+      },
+      realPatchConfig: const PatchClashConfig(),
+      appendSystemDns: false,
+      proxyGroups: const [],
+      rules: const [],
+      addedRules: const [],
+      defaultUA: 'FlClash-Test',
+    );
+    final result = await makeRealProfileTask(state);
+    final config = loadYaml(result.yaml) as YamlMap;
+    expect(config['proxy-groups'].single['name'], 'PROXY_');
+    expect(config['proxy-groups'].single['proxies'], ['PROXY', 'HK']);
+    expect(config['rules'], ['MATCH,PROXY_']);
+    final configured = await makeRealProfileTask(
+      state.copyWith(rawConfig: {
+        ...state.rawConfig,
+        'rules': ['MATCH,DIRECT'],
+      }),
+    );
+    expect((loadYaml(configured.yaml) as YamlMap)['rules'], ['MATCH,DIRECT']);
+  });
+
   test('encoding helpers round-trip structured data', () async {
     final encoded = jsonEncode({
       'name': 'FlClash',

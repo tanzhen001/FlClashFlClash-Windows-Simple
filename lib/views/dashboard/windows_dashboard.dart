@@ -8,6 +8,7 @@ import 'package:fl_clash/views/config/general.dart';
 import 'package:fl_clash/views/tools.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'layout.dart';
@@ -305,7 +306,7 @@ class _NodeSelection extends ConsumerWidget {
     );
     final group = mode == Mode.global
         ? groups.getGroup('GLOBAL')
-        : groups.getGroup(currentGroup ?? '') ??
+        : groups.getGroup(currentGroup == 'GLOBAL' ? '' : currentGroup ?? '') ??
               groups
                   .where(
                     (group) => group.name != 'GLOBAL' && group.hidden != true,
@@ -333,6 +334,26 @@ class _NodeSelection extends ConsumerWidget {
 class _ProfileSelection extends ConsumerWidget {
   const _ProfileSelection();
 
+  Future<void> _importClipboard(WidgetRef ref) async {
+    await globalState.safeRun(() async {
+      final data = await Clipboard.getData(Clipboard.kTextPlain);
+      final links = (data?.text ?? '')
+          .split(RegExp(r'\s+'))
+          .where((link) => link.isNotEmpty)
+          .toList();
+      if (links.isEmpty ||
+          links.any((link) => !link.isShareLink && !link.isUrl)) {
+        throw MessageException(currentAppLocalizations.invalidLinkTip);
+      }
+      final action = ref.read(profilesActionProvider.notifier);
+      if (links.length == 1) {
+        await action.addProfileFromLink(links.single);
+      } else {
+        await action.addProfilesFromLinks(links);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(currentProfileProvider);
@@ -342,8 +363,8 @@ class _ProfileSelection extends ConsumerWidget {
       subtitle: profile?.realLabel ?? context.appLocalizations.addProfile,
       onTap: () => showProfilesSheet(context),
       trailing: IconButton(
-        tooltip: context.appLocalizations.addProfile,
-        onPressed: () => showProfilesSheet(context),
+        tooltip: context.appLocalizations.clipboardImport,
+        onPressed: () => _importClipboard(ref),
         icon: const GlyphIcon(AppGlyphs.add),
       ),
     );
