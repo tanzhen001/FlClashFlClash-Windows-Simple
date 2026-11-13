@@ -324,22 +324,22 @@ class SetupAction extends _$SetupAction {
 
   @visibleForTesting
   Future<void> updateConfig() async {
-    await globalState.safeRun(() async {
-      final patchConfig = ref.read(patchClashConfigProvider);
-      final shouldContinueSetup = await requestAdmin(patchConfig.tun.enable);
-      if (!shouldContinueSetup) {
-        await _restartCoreAfterAuthorization();
-        return;
-      }
-      final networkSetting = ref.read(networkSettingProvider);
-      final message = await _core.updateConfig(
-        _effectivePatchConfig(patchConfig).toUpdateParams(
-          authentication: networkSetting.authentication.credentials,
-          skipCertVerify: !ref.read(appSettingProvider).checkCertificate,
-        ),
-      );
-      if (message.isNotEmpty) throw MessageException(message);
-    });
+    await globalState.safeRun(_pushRuntimeConfig);
+  }
+
+  Future<void> _pushRuntimeConfig() async {
+    final shouldContinueSetup = await requestAdmin(ref.read(patchClashConfigProvider).tun.enable);
+    if (!shouldContinueSetup) {
+      await _restartCoreAfterAuthorization();
+      return;
+    }
+    final message = await _core.updateConfig(
+      _effectivePatchConfig(ref.read(patchClashConfigProvider)).toUpdateParams(
+        authentication: ref.read(networkSettingProvider).authentication.credentials,
+        skipCertVerify: !ref.read(appSettingProvider).checkCertificate,
+      ),
+    );
+    if (message.isNotEmpty) throw MessageException(message);
   }
 
   @protected
@@ -398,11 +398,7 @@ class SetupAction extends _$SetupAction {
           }
         }
         if (revision != _modeRevision) return;
-        final message = await _core.updateConfig(_effectivePatchConfig(ref.read(patchClashConfigProvider)).toUpdateParams(
-          authentication: ref.read(networkSettingProvider).authentication.credentials,
-          skipCertVerify: !ref.read(appSettingProvider).checkCertificate,
-        ));
-        if (message.isNotEmpty) throw MessageException(message);
+        await _pushRuntimeConfig();
         // Existing sockets retain their old route until they reconnect.
         if (revision == _modeRevision && ref.read(isStartProvider)) await _core.closeConnections();
       } catch (_) {
