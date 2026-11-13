@@ -95,6 +95,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Analyze the client
+        id: analyze
         run: flutter analyze --no-fatal-infos
 
       - name: Test the simplified interface
@@ -105,6 +106,20 @@ jobs:
             $original.Replace('build_assets: true', 'build_assets: false') | Set-Content pubspec.yaml -Encoding utf8
             flutter test test/views/dashboard/windows_dashboard_test.dart test/providers/windows_runtime_test.dart test/providers/setup_action_test.dart test/providers/common_action_test.dart test/core/interface_message_test.dart test/core/controller_test.dart test/common/request_test.dart test/l10n test/lint/dynamic_message_key_test.dart
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          } finally {
+            [System.IO.File]::WriteAllText((Join-Path $PWD 'pubspec.yaml'), $original)
+          }
+
+      - name: Render the Chinese Windows interface
+        if: always() && steps.analyze.outcome == 'success'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path build -Force | Out-Null
+          Invoke-WebRequest 'https://raw.githubusercontent.com/notofonts/noto-cjk/f8d157532fbfaeda587e826d4cd5b21a49186f7c/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf' -OutFile build/preview-font.otf
+          if ((git hash-object build/preview-font.otf) -ne 'dc15562470b4f842321894787a0d066879ccff8b') { throw 'Preview font integrity check failed' }
+          $original = Get-Content pubspec.yaml -Raw
+          try {
+            $original.Replace('build_assets: true', 'build_assets: false') | Set-Content pubspec.yaml -Encoding utf8
             flutter test tool/windows_preview_test.dart
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           } finally {

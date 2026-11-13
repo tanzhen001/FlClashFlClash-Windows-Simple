@@ -34,7 +34,7 @@ void main() {
     temporary = await Directory.systemTemp.createTemp('flclash-preview-');
     await useAppPaths(temporary);
     await mockPreferences();
-    final bytes = await File('C:/Windows/Fonts/msyh.ttc').readAsBytes();
+    final bytes = await File('build/preview-font.otf').readAsBytes();
     await (FontLoader(
       'PreviewFont',
     )..addFont(Future.value(ByteData.sublistView(bytes)))).load();

@@ -5,6 +5,8 @@ import 'package:fl_clash/core/core.dart';
 import 'package:fl_clash/core/interface.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/l10n/l10n.dart';
+import 'package:flutter/widgets.dart' show Locale;
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,7 +27,8 @@ void main() {
   late _Core core;
   late ProviderContainer container;
 
-  setUpAll(() {
+  setUpAll(() async {
+    await AppLocalizations.load(const Locale('en'));
     registerFallbackValue(
       defaultClashConfig.toUpdateParams(
         authentication: const [],
