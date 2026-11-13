@@ -83,6 +83,36 @@ Future<void> _openMenu(WidgetTester tester, ProviderContainer container) async {
 }
 
 void main() {
+  testWidgets('the SSR entry imports an SSR share link', (tester) async {
+    final action = _RecordingProfilesAction();
+    final container = _containerFor(tester, profilesAction: action);
+    await _openMenu(tester, container);
+    final l10n = currentAppLocalizations;
+    await tester.tap(find.text('SSR · ${l10n.importFromLink}'));
+    await tester.pumpAndSettle();
+    const link = 'ssr://example';
+    await tester.enterText(_field(l10n.link), link);
+    await tester.tap(find.text(l10n.submit));
+    await tester.pumpAndSettle();
+    expect(action.singles, [link]);
+    expect(tester.takeException(), null);
+  });
+
+  testWidgets('the SSR entry rejects other link schemes', (tester) async {
+    final action = _RecordingProfilesAction();
+    final container = _containerFor(tester, profilesAction: action);
+    await _openMenu(tester, container);
+    final l10n = currentAppLocalizations;
+    await tester.tap(find.text('SSR · ${l10n.importFromLink}'));
+    await tester.pumpAndSettle();
+    await tester.enterText(_field(l10n.link), 'https://example.com');
+    await tester.tap(find.text(l10n.submit));
+    await tester.pumpAndSettle();
+    expect(action.singles, isEmpty);
+    expect(find.text(l10n.invalidLinkTip), findsWidgets);
+    expect(tester.takeException(), null);
+  });
+
   testWidgets('offers the QR code, file, link, and custom entries', (
     tester,
   ) async {

@@ -39,17 +39,26 @@ class AddProfileMenu extends ConsumerWidget {
     });
   }
 
-  Future<void> _toAdd(BuildContext context, WidgetRef ref) async {
+  Future<void> _toAdd(
+    BuildContext context,
+    WidgetRef ref, {
+    bool ssrOnly = false,
+  }) async {
     final profilesAction = ref.read(profilesActionProvider.notifier);
     final appLocalizations = context.appLocalizations;
     final res = await showNamedUrlsForm(
       context,
-      title: appLocalizations.importFromLink,
+      title: ssrOnly
+          ? 'SSR · ${appLocalizations.importFromLink}'
+          : appLocalizations.importFromLink,
       urlLabel: appLocalizations.link,
       batchTip: appLocalizations.batchLinkInputTip,
       urlValidator: (value) {
         if (value == null || value.isEmpty) {
           return appLocalizations.emptyTip(appLocalizations.link);
+        }
+        if (ssrOnly && !value.toLowerCase().startsWith('ssr://')) {
+          return appLocalizations.invalidLinkTip;
         }
         if (!value.isUrl && !value.isShareLink) {
           return appLocalizations.invalidLinkTip;
@@ -60,7 +69,7 @@ class AddProfileMenu extends ConsumerWidget {
         for (final profile in ref.read(profilesProvider))
           if (profile.url.isNotEmpty) profile.url,
       },
-      withAgeSecretKey: true,
+      withAgeSecretKey: !ssrOnly,
     );
     switch (res) {
       case null:
@@ -145,6 +154,11 @@ class AddProfileMenu extends ConsumerWidget {
             glyph: AppGlyphs.cloudDownload,
             label: appLocalizations.link,
             onPressed: () => _toAdd(context, ref),
+          ),
+          CommonPopupMenuItem(
+            glyph: AppGlyphs.add,
+            label: 'SSR · ${appLocalizations.importFromLink}',
+            onPressed: () => _toAdd(context, ref, ssrOnly: true),
           ),
           if (system.isTV)
             CommonPopupMenuItem(

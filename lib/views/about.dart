@@ -194,7 +194,7 @@ class _AboutHero extends StatelessWidget {
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
             child: Text(
-              appLocalizations.desc,
+              system.isWindows ? '基于开源FlClash二次开发' : appLocalizations.desc,
               textAlign: TextAlign.center,
               style: AppTextStyle.subheadline
                   .of(context)

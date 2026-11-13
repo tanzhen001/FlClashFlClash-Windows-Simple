@@ -252,6 +252,7 @@ class Bootstrap {
     if (acceptedVersion >= disclaimerVersion) {
       return true;
     }
+    if (system.isWindows) return true;
     final isDisclaimerAccepted =
         _isDisclaimerAcceptedByEnvironment || await requestDisclaimerConsent();
     if (!isDisclaimerAccepted) {
