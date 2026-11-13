@@ -143,21 +143,34 @@ void main() {
     },
   );
 
-  test('a mode change preserves TUN authorization and never enables a denied TUN', () async {
-    container.dispose();
-    container = ProviderContainer(overrides: [
-      coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
-      setupActionProvider.overrideWith(_DeniedTunSetup.new),
-      profilesProvider.overrideWith(TestProfiles.new),
-    ]);
-    globalState.container = container;
-    container.read(coreStatusProvider.notifier).value = CoreStatus.connected;
-    container.read(patchClashConfigProvider.notifier).update((state) => state.copyWith(tun: state.tun.copyWith(enable: true)));
-    await container.read(setupActionProvider.notifier).changeMode(Mode.direct);
-    final params = verify(() => core.updateConfig(captureAny())).captured.single as UpdateParams;
-    expect(params.mode, Mode.direct);
-    expect(params.tun.enable, isFalse);
-  });
+  test(
+    'a mode change preserves TUN authorization and never enables a denied TUN',
+    () async {
+      container.dispose();
+      container = ProviderContainer(
+        overrides: [
+          coreHandlerProvider.overrideWithValue(CoreController.scoped(core)),
+          setupActionProvider.overrideWith(_DeniedTunSetup.new),
+          profilesProvider.overrideWith(TestProfiles.new),
+        ],
+      );
+      globalState.container = container;
+      container.read(coreStatusProvider.notifier).value = CoreStatus.connected;
+      container
+          .read(patchClashConfigProvider.notifier)
+          .update(
+            (state) => state.copyWith(tun: state.tun.copyWith(enable: true)),
+          );
+      await container
+          .read(setupActionProvider.notifier)
+          .changeMode(Mode.direct);
+      final params =
+          verify(() => core.updateConfig(captureAny())).captured.single
+              as UpdateParams;
+      expect(params.mode, Mode.direct);
+      expect(params.tun.enable, isFalse);
+    },
+  );
 
   test('a failed mode update restores the prior selection', () async {
     when(() => core.updateConfig(any())).thenAnswer((_) async => 'rejected');

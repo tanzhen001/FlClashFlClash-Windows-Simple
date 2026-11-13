@@ -137,7 +137,7 @@ void main() {
             ...GlobalMaterialLocalizations.delegates,
           ],
           supportedLocales: AppLocalizations.delegate.supportedLocales,
-          home: const HomePage(),
+          home: const HomePage(platform: SupportPlatform.Android),
         ),
       ),
     );

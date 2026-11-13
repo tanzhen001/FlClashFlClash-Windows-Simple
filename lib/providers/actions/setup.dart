@@ -317,9 +317,14 @@ class SetupAction extends _$SetupAction {
 
   @protected
   void resetCoreTraffic() {
-    unawaited(_core.resetTraffic().catchError((Object error) {
-      commonPrint.log('Reset traffic failed: $error', logLevel: coreFailureLogLevel(error));
-    }));
+    unawaited(
+      _core.resetTraffic().catchError((Object error) {
+        commonPrint.log(
+          'Reset traffic failed: $error',
+          logLevel: coreFailureLogLevel(error),
+        );
+      }),
+    );
   }
 
   @visibleForTesting
@@ -328,14 +333,19 @@ class SetupAction extends _$SetupAction {
   }
 
   Future<void> _pushRuntimeConfig() async {
-    final shouldContinueSetup = await requestAdmin(ref.read(patchClashConfigProvider).tun.enable);
+    final shouldContinueSetup = await requestAdmin(
+      ref.read(patchClashConfigProvider).tun.enable,
+    );
     if (!shouldContinueSetup) {
       await _restartCoreAfterAuthorization();
       return;
     }
     final message = await _core.updateConfig(
       _effectivePatchConfig(ref.read(patchClashConfigProvider)).toUpdateParams(
-        authentication: ref.read(networkSettingProvider).authentication.credentials,
+        authentication: ref
+            .read(networkSettingProvider)
+            .authentication
+            .credentials,
         skipCertVerify: !ref.read(appSettingProvider).checkCertificate,
       ),
     );
@@ -374,11 +384,15 @@ class SetupAction extends _$SetupAction {
     if (previous == mode) return;
     final revision = ++_modeRevision;
     final previousGroup = ref.read(currentProfileProvider)?.currentGroupName;
-    ref.read(patchClashConfigProvider.notifier).update((state) => state.copyWith(mode: mode));
+    ref
+        .read(patchClashConfigProvider.notifier)
+        .update((state) => state.copyWith(mode: mode));
     if (mode == Mode.global) {
       ref.read(proxiesActionProvider.notifier).updateCurrentGroupName('GLOBAL');
     }
-    if (ref.read(coreStatusProvider) != CoreStatus.connected || ref.read(safeModeProvider)) return;
+    if (ref.read(coreStatusProvider) != CoreStatus.connected ||
+        ref.read(safeModeProvider))
+      return;
     await _modeScheduler.run(() async {
       if (revision != _modeRevision) return;
       try {
@@ -387,24 +401,56 @@ class SetupAction extends _$SetupAction {
           final global = groups.getGroup('GLOBAL');
           final profile = ref.read(currentProfileProvider);
           final saved = profile?.selectedMap['GLOBAL'];
-          if (global != null && (saved == null || !global.all.any((proxy) => proxy.name == saved))) {
-            final candidates = global.all.where((proxy) => !{'DIRECT', 'REJECT', 'REJECT-DROP', 'PASS', 'GLOBAL'}.contains(proxy.name) && !{'direct', 'reject', 'rejectdrop', 'pass'}.contains(proxy.type.toLowerCase()));
-            final target = candidates.where((proxy) => proxy.name == previousGroup).firstOrNull ?? candidates.firstOrNull;
+          if (global != null &&
+              (saved == null ||
+                  !global.all.any((proxy) => proxy.name == saved))) {
+            final candidates = global.all.where(
+              (proxy) =>
+                  !{
+                    'DIRECT',
+                    'REJECT',
+                    'REJECT-DROP',
+                    'PASS',
+                    'GLOBAL',
+                  }.contains(proxy.name) &&
+                  !{
+                    'direct',
+                    'reject',
+                    'rejectdrop',
+                    'pass',
+                  }.contains(proxy.type.toLowerCase()),
+            );
+            final target =
+                candidates
+                    .where((proxy) => proxy.name == previousGroup)
+                    .firstOrNull ??
+                candidates.firstOrNull;
             if (target != null) {
-              final result = await _core.changeProxy(ChangeProxyParams(groupName: 'GLOBAL', proxyName: target.name));
-              if (result.message.isNotEmpty) throw MessageException(result.message);
-              ref.read(profilesActionProvider.notifier).updateCurrentSelectedMap('GLOBAL', target.name);
+              final result = await _core.changeProxy(
+                ChangeProxyParams(groupName: 'GLOBAL', proxyName: target.name),
+              );
+              if (result.message.isNotEmpty)
+                throw MessageException(result.message);
+              ref
+                  .read(profilesActionProvider.notifier)
+                  .updateCurrentSelectedMap('GLOBAL', target.name);
             }
           }
         }
         if (revision != _modeRevision) return;
         await _pushRuntimeConfig();
         // Existing sockets retain their old route until they reconnect.
-        if (revision == _modeRevision && ref.read(isStartProvider)) await _core.closeConnections();
+        if (revision == _modeRevision && ref.read(isStartProvider))
+          await _core.closeConnections();
       } catch (_) {
         if (revision == _modeRevision) {
-          ref.read(patchClashConfigProvider.notifier).update((state) => state.copyWith(mode: previous));
-          if (previousGroup != null) ref.read(proxiesActionProvider.notifier).updateCurrentGroupName(previousGroup);
+          ref
+              .read(patchClashConfigProvider.notifier)
+              .update((state) => state.copyWith(mode: previous));
+          if (previousGroup != null)
+            ref
+                .read(proxiesActionProvider.notifier)
+                .updateCurrentGroupName(previousGroup);
         }
         rethrow;
       }

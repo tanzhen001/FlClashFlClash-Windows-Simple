@@ -11,7 +11,9 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class HomePage extends ConsumerWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, this.platform});
+
+  final SupportPlatform? platform;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -21,7 +23,7 @@ class HomePage extends ConsumerWidget {
     if (!hasViewSize) {
       return const SizedBox.shrink();
     }
-    if (system.isWindows) {
+    if ((platform ?? SupportPlatform.currentPlatform) == SupportPlatform.Windows) {
       return const HomeBackScopeContainer(child: WindowsDashboardView());
     }
     return HomeBackScopeContainer(
