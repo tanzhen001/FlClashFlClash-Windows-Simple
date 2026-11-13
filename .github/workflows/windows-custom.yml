@@ -20,9 +20,6 @@ jobs:
           - arch: x64
             runner: windows-2022
             channel: stable
-          - arch: arm64
-            runner: windows-11-arm
-            channel: master
     steps:
       - uses: actions/checkout@v4
 

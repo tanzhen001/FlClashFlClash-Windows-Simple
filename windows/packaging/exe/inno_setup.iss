@@ -7,6 +7,7 @@ AppPublisherURL={{PUBLISHER_URL}}
 AppSupportURL={{PUBLISHER_URL}}
 AppUpdatesURL={{PUBLISHER_URL}}
 DefaultDirName={{INSTALL_DIR_NAME}}
+DisableDirPage=no
 DisableProgramGroupPage=yes
 OutputDir=.
 OutputBaseFilename={{OUTPUT_BASE_FILENAME}}
