@@ -166,7 +166,9 @@ class Bootstrap {
       _container.read(profilesActionProvider.notifier).autoUpdateProfiles(),
     );
     if (!system.isWindows) {
-      unawaited(_container.read(commonActionProvider.notifier).autoCheckUpdate());
+      unawaited(
+        _container.read(commonActionProvider.notifier).autoCheckUpdate(),
+      );
     }
     unawaited(
       autoLaunch?.updateStatus(_container.read(appSettingProvider).autoLaunch),

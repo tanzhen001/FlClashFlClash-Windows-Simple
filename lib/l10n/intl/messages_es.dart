@@ -1323,6 +1323,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noSearchResults": MessageLookupByLibrary.simpleMessage(
       "No hay resultados",
     ),
+    "nodeSelection": MessageLookupByLibrary.simpleMessage("Selección de nodo"),
     "nodes": MessageLookupByLibrary.simpleMessage("Nodos"),
     "nonTextProviderFile": MessageLookupByLibrary.simpleMessage(
       "Este recurso externo no es un archivo de texto",
@@ -1542,6 +1543,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "resetTip": MessageLookupByLibrary.simpleMessage(
       "¿Seguro que quieres restablecer?",
+    ),
+    "resetTrafficStatistics": MessageLookupByLibrary.simpleMessage(
+      "Restablecer tráfico",
+    ),
+    "resetTrafficStatisticsTip": MessageLookupByLibrary.simpleMessage(
+      "¿Restablecer los contadores de este dispositivo? El consumo de la suscripción no cambia.",
     ),
     "resourceUpdateInterval": MessageLookupByLibrary.simpleMessage(
       "Intervalo de actualización automática",

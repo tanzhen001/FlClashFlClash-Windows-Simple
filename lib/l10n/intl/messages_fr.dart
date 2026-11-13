@@ -1318,6 +1318,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ne pas résoudre le nom d’hôte",
     ),
     "noSearchResults": MessageLookupByLibrary.simpleMessage("Aucun résultat"),
+    "nodeSelection": MessageLookupByLibrary.simpleMessage("Sélection du nœud"),
     "nodes": MessageLookupByLibrary.simpleMessage("Nœuds"),
     "nonTextProviderFile": MessageLookupByLibrary.simpleMessage(
       "Cette ressource externe n’est pas un fichier texte",
@@ -1543,6 +1544,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "resetTip": MessageLookupByLibrary.simpleMessage(
       "Voulez-vous vraiment réinitialiser ?",
+    ),
+    "resetTrafficStatistics": MessageLookupByLibrary.simpleMessage(
+      "Réinitialiser le trafic",
+    ),
+    "resetTrafficStatisticsTip": MessageLookupByLibrary.simpleMessage(
+      "Réinitialiser les compteurs de cet appareil ? Le quota de votre abonnement reste inchangé.",
     ),
     "resourceUpdateInterval": MessageLookupByLibrary.simpleMessage(
       "Intervalle de mise à jour automatique",

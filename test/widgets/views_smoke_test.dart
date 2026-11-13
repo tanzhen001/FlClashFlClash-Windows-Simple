@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fl_clash/features/form/form.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
@@ -121,7 +123,7 @@ void main() {
     'Backup and restore': BackupAndRestore,
     'General': GeneralView,
     'Advanced configuration': AdvancedConfigView,
-    'Custom profile resources': CustomResourcesView,
+    if (!Platform.isWindows) 'Custom profile resources': CustomResourcesView,
   };
 
   for (final entry in toolDestinations.entries) {

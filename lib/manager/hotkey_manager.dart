@@ -136,9 +136,13 @@ class _HotKeyManagerState extends ConsumerState<HotKeyManager> {
       case HotAction.ruleMode:
         unawaited(globalState.safeRun(() => setupAction.changeMode(Mode.rule)));
       case HotAction.globalMode:
-        unawaited(globalState.safeRun(() => setupAction.changeMode(Mode.global)));
+        unawaited(
+          globalState.safeRun(() => setupAction.changeMode(Mode.global)),
+        );
       case HotAction.directMode:
-        unawaited(globalState.safeRun(() => setupAction.changeMode(Mode.direct)));
+        unawaited(
+          globalState.safeRun(() => setupAction.changeMode(Mode.direct)),
+        );
       case HotAction.delayTest:
         unawaited(
           ref

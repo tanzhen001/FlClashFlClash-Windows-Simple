@@ -92,7 +92,10 @@ void main() {
       items.singleWhere((item) => item.label == PageLabel.connections).modes,
       contains(NavigationItemMode.moreFull),
     );
-    expect(items.singleWhere((item) => item.label == PageLabel.resources).modes, isEmpty);
+    expect(
+      items.singleWhere((item) => item.label == PageLabel.resources).modes,
+      isEmpty,
+    );
     expect(
       items.singleWhere((item) => item.label == PageLabel.logs).modes,
       contains(NavigationItemMode.more),
@@ -150,20 +153,37 @@ void main() {
     );
   });
 
-  testWidgets('node selection precedes profiles and traffic uses real values', (tester) async {
-    container.read(totalTrafficProvider.notifier).value = const Traffic(up: 1024, down: 2048);
+  testWidgets('node selection precedes profiles and traffic uses real values', (
+    tester,
+  ) async {
+    container.read(totalTrafficProvider.notifier).value = const Traffic(
+      up: 1024,
+      down: 2048,
+    );
     container.read(runTimeProvider.notifier).value = 1;
     await pumpDashboard(tester, size: const Size(380, 700));
-    final total = tester.widget<Text>(find.byKey(const ValueKey('windows-traffic-total')));
+    final total = tester.widget<Text>(
+      find.byKey(const ValueKey('windows-traffic-total')),
+    );
     expect(total.data, contains('1'));
     expect(total.data, contains('2'));
-    expect(tester.getTopLeft(find.byKey(const ValueKey('windows-node-selection'))).dy,
-      lessThan(tester.getTopLeft(find.byKey(const ValueKey('windows-profile-selection'))).dy));
+    expect(
+      tester
+          .getTopLeft(find.byKey(const ValueKey('windows-node-selection')))
+          .dy,
+      lessThan(
+        tester
+            .getTopLeft(find.byKey(const ValueKey('windows-profile-selection')))
+            .dy,
+      ),
+    );
     expect(find.byKey(const ValueKey('windows-reset-traffic')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('mode controls delegate global and direct changes', (tester) async {
+  testWidgets('mode controls delegate global and direct changes', (
+    tester,
+  ) async {
     await pumpDashboard(tester, size: const Size(380, 700));
     await tester.tap(find.byKey(const ValueKey('windows-mode-global')));
     await tester.pump();

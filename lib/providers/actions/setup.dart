@@ -388,7 +388,7 @@ class SetupAction extends _$SetupAction {
           final profile = ref.read(currentProfileProvider);
           final saved = profile?.selectedMap['GLOBAL'];
           if (global != null && (saved == null || !global.all.any((proxy) => proxy.name == saved))) {
-            final candidates = global.all.where((proxy) => !{'DIRECT', 'REJECT', 'REJECT-DROP', 'PASS', 'GLOBAL'}.contains(proxy.name));
+            final candidates = global.all.where((proxy) => !{'DIRECT', 'REJECT', 'REJECT-DROP', 'PASS', 'GLOBAL'}.contains(proxy.name) && !{'direct', 'reject', 'rejectdrop', 'pass'}.contains(proxy.type.toLowerCase()));
             final target = candidates.where((proxy) => proxy.name == previousGroup).firstOrNull ?? candidates.firstOrNull;
             if (target != null) {
               final result = await _core.changeProxy(ChangeProxyParams(groupName: 'GLOBAL', proxyName: target.name));

@@ -202,12 +202,13 @@ class _AboutHero extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          if (!system.isWindows) TonalButton(
-            size: TonalButtonSize.bar,
-            glyph: AppGlyphs.sync,
-            label: appLocalizations.checkUpdate,
-            onPressed: isCheckingUpdate ? null : onCheckUpdate,
-          ),
+          if (!system.isWindows)
+            TonalButton(
+              size: TonalButtonSize.bar,
+              glyph: AppGlyphs.sync,
+              label: appLocalizations.checkUpdate,
+              onPressed: isCheckingUpdate ? null : onCheckUpdate,
+            ),
         ],
       ),
     );

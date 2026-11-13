@@ -52,8 +52,11 @@ class Window implements WindowPort {
     if (!system.isMacOS || version > 10) {
       await desktopWindow.setTitleBarStyle(TitleBarStyle.hidden);
     }
-    final compact = system.isWindows && !await preferences.getCompactWindowApplied();
-    await desktopWindow.setSize(compact ? const Size(380, 700) : props.savedSize ?? await _defaultSize());
+    final compact =
+        system.isWindows && !await preferences.getCompactWindowApplied();
+    await desktopWindow.setSize(
+      compact ? const Size(380, 700) : props.savedSize ?? await _defaultSize(),
+    );
     if (compact) await preferences.setCompactWindowApplied();
     await desktopWindow.setMinimumSize(const Size(380, 400));
     await _windowPosition(props);

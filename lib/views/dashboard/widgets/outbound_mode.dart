@@ -21,7 +21,11 @@ Glyph _glyphOf(Mode mode) => switch (mode) {
 
 void _changeMode(WidgetRef ref, Mode mode) {
   if (ref.read(patchClashConfigProvider).mode == mode) return;
-  unawaited(globalState.safeRun(() => ref.read(setupActionProvider.notifier).changeMode(mode)));
+  unawaited(
+    globalState.safeRun(
+      () => ref.read(setupActionProvider.notifier).changeMode(mode),
+    ),
+  );
 }
 
 class OutboundModeCard extends ConsumerWidget {

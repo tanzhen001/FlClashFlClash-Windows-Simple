@@ -8052,6 +8052,36 @@ class AppLocalizations {
       args: [name],
     );
   }
+
+  /// `Node selection`
+  String get nodeSelection {
+    return Intl.message(
+      'Node selection',
+      name: 'nodeSelection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reset traffic statistics`
+  String get resetTrafficStatistics {
+    return Intl.message(
+      'Reset traffic statistics',
+      name: 'resetTrafficStatistics',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reset upload and download counters on this device? This does not reset your subscription usage.`
+  String get resetTrafficStatisticsTip {
+    return Intl.message(
+      'Reset upload and download counters on this device? This does not reset your subscription usage.',
+      name: 'resetTrafficStatisticsTip',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

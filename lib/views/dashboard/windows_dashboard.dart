@@ -23,7 +23,10 @@ class WindowsDashboardView extends StatelessWidget {
   Widget build(BuildContext context) {
     return CommonScaffold(
       titleWidget: Center(
-        child: Text(appName, style: AppTextStyle.title3.of(context, emphasized: true)),
+        child: Text(
+          appName,
+          style: AppTextStyle.title3.of(context, emphasized: true),
+        ),
       ),
       backgroundColor: DashboardColors.of(context).page,
       body: Builder(
@@ -32,7 +35,12 @@ class WindowsDashboardView extends StatelessWidget {
           scale: MediaQuery.textScalerOf(context).scale(1),
           child: SingleChildScrollView(
             key: const ValueKey('windows-dashboard-scroll'),
-            padding: EdgeInsets.fromLTRB(20, context.contentTopPadding, 20, 20 + context.bottomInset),
+            padding: EdgeInsets.fromLTRB(
+              20,
+              context.contentTopPadding,
+              20,
+              20 + context.bottomInset,
+            ),
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 420),
@@ -41,7 +49,10 @@ class WindowsDashboardView extends StatelessWidget {
                   spacing: 20,
                   children: [
                     DashboardCard(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -59,19 +70,28 @@ class WindowsDashboardView extends StatelessWidget {
                       ),
                     ),
                     DashboardCard(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
                       child: Column(
                         children: [
                           _SettingsRow(
                             title: context.appLocalizations.settings,
                             glyph: AppGlyphs.settings,
-                            onTap: () => showSheet<void>(context: context, builder: (_) => const ToolsView()),
+                            onTap: () => showSheet<void>(
+                              context: context,
+                              builder: (_) => const ToolsView(),
+                            ),
                           ),
                           const Divider(height: 1),
                           _SettingsRow(
                             title: context.appLocalizations.core,
                             glyph: AppGlyphs.cpu,
-                            onTap: () => showSheet<void>(context: context, builder: (_) => const GeneralView()),
+                            onTap: () => showSheet<void>(
+                              context: context,
+                              builder: (_) => const GeneralView(),
+                            ),
                           ),
                         ],
                       ),
@@ -96,22 +116,45 @@ class _ConnectionStatus extends ConsumerWidget {
     final running = ref.watch(isStartProvider);
     final suspended = running && ref.watch(suspendProvider);
     final connecting = ref.watch(coreStatusProvider) == CoreStatus.connecting;
-    final hasProfiles = ref.watch(profilesProvider.select((profiles) => profiles.isNotEmpty));
-    final status = connecting ? strings.connecting : suspended ? strings.suspended : running ? strings.running : strings.notRunning;
-    final color = running && !suspended ? context.colorScheme.success : context.colorScheme.onSurfaceVariant;
+    final hasProfiles = ref.watch(
+      profilesProvider.select((profiles) => profiles.isNotEmpty),
+    );
+    final status = connecting
+        ? strings.connecting
+        : suspended
+        ? strings.suspended
+        : running
+        ? strings.running
+        : strings.notRunning;
+    final color = running && !suspended
+        ? context.colorScheme.success
+        : context.colorScheme.onSurfaceVariant;
     return Row(
       children: [
-        Container(width: 7, height: 7, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        Container(
+          width: 7,
+          height: 7,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
         const SizedBox(width: 10),
-        Expanded(child: Text(status, style: AppTextStyle.subheadline.of(context))),
-        if (connecting) const SizedBox.square(dimension: 20, child: CommonCircleLoading()),
+        Expanded(
+          child: Text(status, style: AppTextStyle.subheadline.of(context)),
+        ),
+        if (connecting)
+          const SizedBox.square(dimension: 20, child: CommonCircleLoading()),
         Theme(
-          data: Theme.of(context).copyWith(colorScheme: context.colorScheme.copyWith(primary: context.colorScheme.success)),
+          data: Theme.of(context).copyWith(
+            colorScheme: context.colorScheme.copyWith(
+              primary: context.colorScheme.success,
+            ),
+          ),
           child: CommonSwitch(
             key: const ValueKey('windows-connection-toggle'),
             semanticLabel: running ? strings.stop : strings.start,
             value: running,
-            onChanged: hasProfiles && !connecting ? (_) => ref.read(commonActionProvider.notifier).toggleRunning() : null,
+            onChanged: hasProfiles && !connecting
+                ? (_) => ref.read(commonActionProvider.notifier).toggleRunning()
+                : null,
           ),
         ),
       ],
@@ -132,11 +175,16 @@ class _TrafficStatisticsState extends ConsumerState<_TrafficStatistics> {
   Future<void> _reset() async {
     if (_resetting) return;
     final strings = context.appLocalizations;
-    final confirmed = await dialogs.showMessage(title: strings.resetTrafficStatistics, message: TextSpan(text: strings.resetTrafficStatisticsTip));
+    final confirmed = await dialogs.showMessage(
+      title: strings.resetTrafficStatistics,
+      message: TextSpan(text: strings.resetTrafficStatisticsTip),
+    );
     if (confirmed != true || !mounted) return;
     setState(() => _resetting = true);
     try {
-      await globalState.safeRun(() => ref.read(commonActionProvider.notifier).resetTrafficStatistics());
+      await globalState.safeRun(
+        () => ref.read(commonActionProvider.notifier).resetTrafficStatistics(),
+      );
     } finally {
       if (mounted) setState(() => _resetting = false);
     }
@@ -156,8 +204,16 @@ class _TrafficStatisticsState extends ConsumerState<_TrafficStatistics> {
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 2,
             children: [
-              Text('↑ ${dashboardTraffic(total.up)}  ↓ ${dashboardTraffic(total.down)}', key: const ValueKey('windows-traffic-total'), style: style),
-              Text('↑ ${dashboardTraffic(speed.up)}/s  ↓ ${dashboardTraffic(speed.down)}/s', key: const ValueKey('windows-traffic-speed'), style: style),
+              Text(
+                '↑ ${dashboardTraffic(total.up)}  ↓ ${dashboardTraffic(total.down)}',
+                key: const ValueKey('windows-traffic-total'),
+                style: style,
+              ),
+              Text(
+                '↑ ${dashboardTraffic(speed.up)}/s  ↓ ${dashboardTraffic(speed.down)}/s',
+                key: const ValueKey('windows-traffic-speed'),
+                style: style,
+              ),
             ],
           ),
         ),
@@ -165,7 +221,9 @@ class _TrafficStatisticsState extends ConsumerState<_TrafficStatistics> {
           key: const ValueKey('windows-reset-traffic'),
           tooltip: context.appLocalizations.resetTrafficStatistics,
           onPressed: _resetting ? null : _reset,
-          icon: _resetting ? const CommonCircleLoading() : const GlyphIcon(AppGlyphs.reset, size: 18),
+          icon: _resetting
+              ? const CommonCircleLoading()
+              : const GlyphIcon(AppGlyphs.reset, size: 18),
         ),
       ],
     );
@@ -186,7 +244,9 @@ class _ModeControlState extends ConsumerState<_ModeControl> {
     if (_busy || ref.read(patchClashConfigProvider).mode == mode) return;
     setState(() => _busy = true);
     try {
-      await globalState.safeRun(() => ref.read(setupActionProvider.notifier).changeMode(mode));
+      await globalState.safeRun(
+        () => ref.read(setupActionProvider.notifier).changeMode(mode),
+      );
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -194,7 +254,9 @@ class _ModeControlState extends ConsumerState<_ModeControl> {
 
   @override
   Widget build(BuildContext context) {
-    final mode = ref.watch(patchClashConfigProvider.select((state) => state.mode));
+    final mode = ref.watch(
+      patchClashConfigProvider.select((state) => state.mode),
+    );
     return DashboardConnectedGroup(
       children: [
         for (final (index, item) in Mode.values.indexed)
@@ -208,10 +270,19 @@ class _ModeControlState extends ConsumerState<_ModeControl> {
               inner: AppCorner.full,
               background: DashboardColors.of(context).tone,
               semanticLabel: item.label,
-              onTap: () { if (!_busy) _select(item); },
+              onTap: () {
+                if (!_busy) _select(item);
+              },
               builder: (foreground) => SizedBox(
                 height: 38,
-                child: Center(child: Text(item.label, style: AppTextStyle.footnote.of(context).copyWith(color: foreground))),
+                child: Center(
+                  child: Text(
+                    item.label,
+                    style: AppTextStyle.footnote
+                        .of(context)
+                        .copyWith(color: foreground),
+                  ),
+                ),
               ),
             ),
           ),
@@ -225,19 +296,36 @@ class _NodeSelection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final mode = ref.watch(patchClashConfigProvider.select((state) => state.mode));
+    final mode = ref.watch(
+      patchClashConfigProvider.select((state) => state.mode),
+    );
     final groups = ref.watch(groupsProvider);
-    final currentGroup = ref.watch(currentProfileProvider.select((profile) => profile?.currentGroupName));
+    final currentGroup = ref.watch(
+      currentProfileProvider.select((profile) => profile?.currentGroupName),
+    );
     final group = mode == Mode.global
         ? groups.getGroup('GLOBAL')
-        : groups.getGroup(currentGroup ?? '') ?? groups.where((group) => group.name != 'GLOBAL' && group.hidden != true).firstOrNull;
-    final selected = group == null ? null : ref.watch(selectedProxyNameProvider(group.name));
-    final subtitle = mode == Mode.direct ? context.appLocalizations.direct : group == null ? context.appLocalizations.proxyGroupsAfterStart : '${group.name} → ${selected ?? group.realNow}';
+        : groups.getGroup(currentGroup ?? '') ??
+              groups
+                  .where(
+                    (group) => group.name != 'GLOBAL' && group.hidden != true,
+                  )
+                  .firstOrNull;
+    final selected = group == null
+        ? null
+        : ref.watch(selectedProxyNameProvider(group.name));
+    final subtitle = mode == Mode.direct
+        ? context.appLocalizations.direct
+        : group == null
+        ? context.appLocalizations.proxyGroupsAfterStart
+        : '${group.name} → ${selected ?? group.realNow}';
     return _DetailRow(
       key: const ValueKey('windows-node-selection'),
       title: context.appLocalizations.nodeSelection,
       subtitle: subtitle,
-      onTap: mode != Mode.direct && group != null ? () => showProxiesSheet(context, groupName: group.name) : null,
+      onTap: mode != Mode.direct && group != null
+          ? () => showProxiesSheet(context, groupName: group.name)
+          : null,
     );
   }
 }
@@ -263,7 +351,13 @@ class _ProfileSelection extends ConsumerWidget {
 }
 
 class _DetailRow extends StatelessWidget {
-  const _DetailRow({super.key, required this.title, required this.subtitle, this.onTap, this.trailing});
+  const _DetailRow({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    this.onTap,
+    this.trailing,
+  });
 
   final String title;
   final String subtitle;
@@ -285,12 +379,20 @@ class _DetailRow extends StatelessWidget {
                 spacing: 3,
                 children: [
                   Text(title, style: AppTextStyle.subheadline.of(context)),
-                  Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppTextStyle.caption1.of(context).copyWith(color: context.colorScheme.primary)),
+                  Text(
+                    subtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyle.caption1
+                        .of(context)
+                        .copyWith(color: context.colorScheme.primary),
+                  ),
                 ],
               ),
             ),
             ?trailing,
-            if (onTap != null) const GlyphIcon(AppGlyphs.chevronForward, size: 18),
+            if (onTap != null)
+              const GlyphIcon(AppGlyphs.chevronForward, size: 18),
           ],
         ),
       ),
@@ -303,15 +405,38 @@ class _TakeoverControls extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final systemProxy = ref.watch(networkSettingProvider.select((state) => state.systemProxy));
-    final tun = ref.watch(patchClashConfigProvider.select((state) => state.tun.enable));
+    final systemProxy = ref.watch(
+      networkSettingProvider.select((state) => state.systemProxy),
+    );
+    final tun = ref.watch(
+      patchClashConfigProvider.select((state) => state.tun.enable),
+    );
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: Row(
         children: [
-          Expanded(child: _TakeoverButton(label: context.appLocalizations.systemProxy, enabled: systemProxy, onTap: () => ref.read(networkSettingProvider.notifier).update((state) => state.copyWith(systemProxy: !systemProxy)))),
+          Expanded(
+            child: _TakeoverButton(
+              label: context.appLocalizations.systemProxy,
+              enabled: systemProxy,
+              onTap: () => ref
+                  .read(networkSettingProvider.notifier)
+                  .update((state) => state.copyWith(systemProxy: !systemProxy)),
+            ),
+          ),
           const SizedBox(width: 12),
-          Expanded(child: _TakeoverButton(label: 'TUN', enabled: tun, onTap: () => ref.read(patchClashConfigProvider.notifier).update((state) => state.copyWith(tun: state.tun.copyWith(enable: !tun))))),
+          Expanded(
+            child: _TakeoverButton(
+              label: 'TUN',
+              enabled: tun,
+              onTap: () => ref
+                  .read(patchClashConfigProvider.notifier)
+                  .update(
+                    (state) =>
+                        state.copyWith(tun: state.tun.copyWith(enable: !tun)),
+                  ),
+            ),
+          ),
         ],
       ),
     );
@@ -319,7 +444,11 @@ class _TakeoverControls extends ConsumerWidget {
 }
 
 class _TakeoverButton extends StatelessWidget {
-  const _TakeoverButton({required this.label, required this.enabled, required this.onTap});
+  const _TakeoverButton({
+    required this.label,
+    required this.enabled,
+    required this.onTap,
+  });
   final String label;
   final bool enabled;
   final VoidCallback onTap;
@@ -332,14 +461,25 @@ class _TakeoverButton extends StatelessWidget {
       spacing: 6,
       children: [
         GlyphIcon(enabled ? AppGlyphs.check : AppGlyphs.removeCircle, size: 16),
-        Flexible(child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppTextStyle.caption1.of(context))),
+        Flexible(
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyle.caption1.of(context),
+          ),
+        ),
       ],
     ),
   );
 }
 
 class _SettingsRow extends StatelessWidget {
-  const _SettingsRow({required this.title, required this.glyph, required this.onTap});
+  const _SettingsRow({
+    required this.title,
+    required this.glyph,
+    required this.onTap,
+  });
   final String title;
   final Glyph glyph;
   final VoidCallback onTap;
@@ -354,7 +494,9 @@ class _SettingsRow extends StatelessWidget {
         spacing: 16,
         children: [
           GlyphIcon(glyph, size: 20),
-          Expanded(child: Text(title, style: AppTextStyle.subheadline.of(context))),
+          Expanded(
+            child: Text(title, style: AppTextStyle.subheadline.of(context)),
+          ),
           const GlyphIcon(AppGlyphs.chevronForward, size: 18),
         ],
       ),

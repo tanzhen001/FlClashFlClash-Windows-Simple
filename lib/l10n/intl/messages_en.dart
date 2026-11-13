@@ -1228,6 +1228,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noSearchResults": MessageLookupByLibrary.simpleMessage(
       "No matching results",
     ),
+    "nodeSelection": MessageLookupByLibrary.simpleMessage("Node selection"),
     "nodes": MessageLookupByLibrary.simpleMessage("Nodes"),
     "nonTextProviderFile": MessageLookupByLibrary.simpleMessage(
       "This external resource is not a text file",
@@ -1429,6 +1430,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "resetTip": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to reset?",
+    ),
+    "resetTrafficStatistics": MessageLookupByLibrary.simpleMessage(
+      "Reset traffic statistics",
+    ),
+    "resetTrafficStatisticsTip": MessageLookupByLibrary.simpleMessage(
+      "Reset upload and download counters on this device? This does not reset your subscription usage.",
     ),
     "resourceUpdateInterval": MessageLookupByLibrary.simpleMessage(
       "Auto-update interval",

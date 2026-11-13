@@ -556,7 +556,10 @@ abstract class CoreHandlerInterface with CoreInterface {
   Future<void> resetTraffic() async {
     final answered = await _invokeMethod<bool>(method: CoreMethod.resetTraffic);
     if (answered != true) {
-      throw CoreMethodException(code: 'no_response', message: 'Core did not answer resetTraffic');
+      throw CoreMethodException(
+        code: 'no_response',
+        message: 'Core did not answer resetTraffic',
+      );
     }
   }
 

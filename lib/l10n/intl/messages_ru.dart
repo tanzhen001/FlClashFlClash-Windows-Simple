@@ -1282,6 +1282,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noSearchResults": MessageLookupByLibrary.simpleMessage(
       "Ничего не найдено",
     ),
+    "nodeSelection": MessageLookupByLibrary.simpleMessage("Выбор узла"),
     "nodes": MessageLookupByLibrary.simpleMessage("Узлы"),
     "nonTextProviderFile": MessageLookupByLibrary.simpleMessage(
       "Этот внешний ресурс не является текстовым файлом",
@@ -1491,6 +1492,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "resetTip": MessageLookupByLibrary.simpleMessage(
       "Вы уверены, что хотите выполнить сброс?",
+    ),
+    "resetTrafficStatistics": MessageLookupByLibrary.simpleMessage(
+      "Сбросить статистику трафика",
+    ),
+    "resetTrafficStatisticsTip": MessageLookupByLibrary.simpleMessage(
+      "Сбросить счётчики на этом устройстве? Использование подписки не изменится.",
     ),
     "resourceUpdateInterval": MessageLookupByLibrary.simpleMessage(
       "Интервал автообновления",

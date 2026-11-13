@@ -331,11 +331,12 @@ class GeneralView extends ConsumerWidget {
         select: (state) => state.closeConnections,
         update: (state, value) => state.copyWith(closeConnections: value),
       ),
-      if (!system.isWindows) _appSettingToggle(
-        title: (l) => l.onlyStatisticsProxy,
-        select: (state) => state.onlyStatisticsProxy,
-        update: (state, value) => state.copyWith(onlyStatisticsProxy: value),
-      ),
+      if (!system.isWindows)
+        _appSettingToggle(
+          title: (l) => l.onlyStatisticsProxy,
+          select: (state) => state.onlyStatisticsProxy,
+          update: (state, value) => state.copyWith(onlyStatisticsProxy: value),
+        ),
     ];
   }
 
@@ -347,11 +348,12 @@ class GeneralView extends ConsumerWidget {
         select: (state) => state.checkCertificate,
         update: (state, value) => state.copyWith(checkCertificate: value),
       ),
-      if (!system.isWindows) _appSettingToggle(
-        title: (l) => l.autoCheckUpdate,
-        select: (state) => state.autoCheckUpdate,
-        update: (state, value) => state.copyWith(autoCheckUpdate: value),
-      ),
+      if (!system.isWindows)
+        _appSettingToggle(
+          title: (l) => l.autoCheckUpdate,
+          select: (state) => state.autoCheckUpdate,
+          update: (state, value) => state.copyWith(autoCheckUpdate: value),
+        ),
     ];
   }
 

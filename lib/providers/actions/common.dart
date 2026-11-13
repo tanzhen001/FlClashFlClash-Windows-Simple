@@ -39,8 +39,13 @@ class CommonAction extends _$CommonAction {
 
   void updateMode() {
     final mode = ref.read(patchClashConfigProvider).mode;
-    final next = Mode.values[(Mode.values.indexOf(mode) + 1) % Mode.values.length];
-    unawaited(globalState.safeRun(() => ref.read(setupActionProvider.notifier).changeMode(next)));
+    final next =
+        Mode.values[(Mode.values.indexOf(mode) + 1) % Mode.values.length];
+    unawaited(
+      globalState.safeRun(
+        () => ref.read(setupActionProvider.notifier).changeMode(next),
+      ),
+    );
   }
 
   int _trafficRevision = 0;
@@ -51,7 +56,8 @@ class CommonAction extends _$CommonAction {
     _resettingTraffic = true;
     _trafficRevision++;
     try {
-      if (ref.read(coreStatusProvider) == CoreStatus.connected && !ref.read(safeModeProvider)) {
+      if (ref.read(coreStatusProvider) == CoreStatus.connected &&
+          !ref.read(safeModeProvider)) {
         await _core.resetTraffic();
       }
       if (!ref.mounted) return;
@@ -74,9 +80,11 @@ class CommonAction extends _$CommonAction {
     _isUpdatingTraffic = true;
     final revision = _trafficRevision;
     try {
-      final onlyStatisticsProxy = system.isWindows ? false : ref.read(
-        appSettingProvider.select((state) => state.onlyStatisticsProxy),
-      );
+      final onlyStatisticsProxy = system.isWindows
+          ? false
+          : ref.read(
+              appSettingProvider.select((state) => state.onlyStatisticsProxy),
+            );
       final [traffic, totalTraffic] = await Future.wait([
         _readTraffic(() => _core.getTraffic(onlyStatisticsProxy)),
         _readTraffic(() => _core.getTotalTraffic(onlyStatisticsProxy)),

@@ -120,19 +120,25 @@ void main() {
     expect(await core.watchRoute(true), isNull);
   });
 
-  test('traffic reset reports failure while unobserved log calls absorb it', () async {
-    final core = _DisconnectedCore();
+  test(
+    'traffic reset reports failure while unobserved log calls absorb it',
+    () async {
+      final core = _DisconnectedCore();
 
-    await expectLater(core.resetTraffic(), throwsA(isA<CoreMethodException>()));
-    await core.startLog();
-    await core.stopLog();
+      await expectLater(
+        core.resetTraffic(),
+        throwsA(isA<CoreMethodException>()),
+      );
+      await core.startLog();
+      await core.stopLog();
 
-    expect(core.invoked, [
-      CoreMethod.resetTraffic,
-      CoreMethod.startLog,
-      CoreMethod.stopLog,
-    ]);
-  });
+      expect(core.invoked, [
+        CoreMethod.resetTraffic,
+        CoreMethod.startLog,
+        CoreMethod.stopLog,
+      ]);
+    },
+  );
 }
 
 class _DisconnectedCore extends _SilentCore {

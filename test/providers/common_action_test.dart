@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:fl_clash/core/controller.dart';
 import 'package:fl_clash/core/interface.dart';
@@ -84,11 +85,12 @@ void main() {
       container
           .read(appSettingProvider.notifier)
           .update((state) => state.copyWith(onlyStatisticsProxy: true));
+      final onlyProxy = !Platform.isWindows;
       when(
-        () => core.getTraffic(true),
+        () => core.getTraffic(onlyProxy),
       ).thenAnswer((_) async => const Traffic(up: 10, down: 20));
       when(
-        () => core.getTotalTraffic(true),
+        () => core.getTotalTraffic(onlyProxy),
       ).thenAnswer((_) async => const Traffic(up: 100, down: 200));
 
       await container.read(commonActionProvider.notifier).updateTraffic();
@@ -99,8 +101,8 @@ void main() {
         container.read(totalTrafficProvider),
         const Traffic(up: 100, down: 200),
       );
-      verify(() => core.getTraffic(true)).called(1);
-      verify(() => core.getTotalTraffic(true)).called(1);
+      verify(() => core.getTraffic(onlyProxy)).called(1);
+      verify(() => core.getTotalTraffic(onlyProxy)).called(1);
     });
 
     test('swallows a core failure and leaves the total untouched', () async {

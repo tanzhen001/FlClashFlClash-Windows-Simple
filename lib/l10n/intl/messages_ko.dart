@@ -1038,6 +1038,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noResolve": MessageLookupByLibrary.simpleMessage("IP 확인 안 함"),
     "noResolveHostname": MessageLookupByLibrary.simpleMessage("호스트 이름 확인 안 함"),
     "noSearchResults": MessageLookupByLibrary.simpleMessage("일치하는 결과 없음"),
+    "nodeSelection": MessageLookupByLibrary.simpleMessage("노드 선택"),
     "nodes": MessageLookupByLibrary.simpleMessage("노드"),
     "nonTextProviderFile": MessageLookupByLibrary.simpleMessage(
       "이 외부 리소스는 텍스트 파일이 아닙니다",
@@ -1204,6 +1205,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "이 페이지에 변경 사항이 있습니다. 초기화하시겠습니까?",
     ),
     "resetTip": MessageLookupByLibrary.simpleMessage("초기화하시겠습니까?"),
+    "resetTrafficStatistics": MessageLookupByLibrary.simpleMessage(
+      "트래픽 통계 초기화",
+    ),
+    "resetTrafficStatisticsTip": MessageLookupByLibrary.simpleMessage(
+      "이 기기의 송수신 통계를 초기화할까요? 구독 사용량은 변경되지 않습니다.",
+    ),
     "resourceUpdateInterval": MessageLookupByLibrary.simpleMessage(
       "자동 업데이트 간격",
     ),

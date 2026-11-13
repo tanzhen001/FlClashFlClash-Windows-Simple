@@ -70,6 +70,15 @@ void main() {
   });
 
   group('latestRelease', () {
+    if (Platform.isWindows) {
+      test('Windows never contacts software release endpoints', () async {
+        final client = Request()..dio.httpClientAdapter = _HostAdapter({});
+        expect(await client.checkForUpdate(), isNull);
+        await expectLater(client.latestRelease(), throwsUnsupportedError);
+      });
+      return;
+    }
+
     Request requestAnswering(Map<String, ResponseBody Function()> byHost) {
       return Request()..dio.httpClientAdapter = _HostAdapter(byHost);
     }

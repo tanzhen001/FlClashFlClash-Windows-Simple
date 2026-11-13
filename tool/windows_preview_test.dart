@@ -65,8 +65,13 @@ void main() {
       addTearDown(() => navigationPort = null);
       container.read(viewSizeProvider.notifier).value = size;
       container.read(runTimeProvider.notifier).value = 1000;
-      container.read(totalTrafficProvider.notifier).value = const Traffic(up: 55400, down: 127400);
-      container.read(trafficsProvider.notifier).addTraffic(const Traffic(up: 1200, down: 3400));
+      container.read(totalTrafficProvider.notifier).value = const Traffic(
+        up: 55400,
+        down: 127400,
+      );
+      container
+          .read(trafficsProvider.notifier)
+          .addTraffic(const Traffic(up: 1200, down: 3400));
       container.read(groupsProvider.notifier).value = const [
         Group(
           name: '日本节点',
@@ -103,8 +108,9 @@ void main() {
         final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
         final output = Directory('build/ui-preview')
           ..createSync(recursive: true);
-        await File('${output.path}/$name.png')
-            .writeAsBytes(bytes!.buffer.asUint8List());
+        await File(
+          '${output.path}/$name.png',
+        ).writeAsBytes(bytes!.buffer.asUint8List());
         image.dispose();
       });
     });

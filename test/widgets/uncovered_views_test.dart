@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -289,6 +290,12 @@ void main() {
     );
     await tester.pump();
     expect(find.byType(LinearProgressIndicator), findsNothing);
+
+    if (Platform.isWindows) {
+      expect(find.text('Check for updates'), findsNothing);
+      expect(adapter.requests, 0);
+      return;
+    }
 
     await tester.tap(find.text('Check for updates'));
     await tester.pump();

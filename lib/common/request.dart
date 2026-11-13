@@ -99,7 +99,8 @@ class Request {
   /// The release page redirect still answers once the hourly API quota is spent.
   @visibleForTesting
   Future<Map<String, dynamic>> latestRelease() async {
-    if (system.isWindows) throw UnsupportedError('Software updates are disabled');
+    if (system.isWindows)
+      throw UnsupportedError('Software updates are disabled');
     try {
       final response = await dio.get<Map<String, dynamic>>(
         'https://api.github.com/repos/$repository/releases/latest',
