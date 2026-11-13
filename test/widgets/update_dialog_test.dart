@@ -81,6 +81,9 @@ void main() {
         isFalse,
       );
       expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      container.dispose();
+      await tester.pump();
     });
     return;
   }
