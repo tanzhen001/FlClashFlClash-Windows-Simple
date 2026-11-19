@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:fl_clash/core/controller.dart';
 import 'package:fl_clash/core/desktop/model.dart';
@@ -631,6 +632,8 @@ void main() {
         await Future<void>.delayed(Duration.zero);
         expect(action.transitions, [true]);
 
+        const total = Traffic(up: 123, down: 456);
+        container.read(totalTrafficProvider.notifier).value = total;
         final stopFuture = action.setRunning(false);
         expect(container.read(runTimeProvider), isNull);
 
@@ -641,7 +644,11 @@ void main() {
         expect(container.read(runTimeProvider), isNull);
         expect(container.read(isStartProvider), isFalse);
         expect(action.applyProfileDebounceCount, 0);
-        expect(action.resetCoreTrafficCount, 1);
+        expect(action.resetCoreTrafficCount, Platform.isWindows ? 0 : 1);
+        expect(
+          container.read(totalTrafficProvider),
+          Platform.isWindows ? total : const Traffic(),
+        );
       });
 
       test('skips an intermediate stop when a newer start is queued', () async {

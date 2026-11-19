@@ -2,10 +2,13 @@ package core
 
 import (
 	"context"
+	"errors"
+	"runtime"
 	"sync/atomic"
 	"time"
 
 	"github.com/metacubex/mihomo/common/utils"
+	"github.com/metacubex/mihomo/component/dialer"
 	"github.com/metacubex/mihomo/constant"
 )
 
@@ -91,10 +94,37 @@ func handleTestDelay(params *TestDelayParams) *Delay {
 
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
-	delay, err := proxy.URLTest(ctx, url, anyDelayTestStatus)
+	var delay uint16
+	var err error
+	if runtime.GOOS == "windows" {
+		for depth := 0; isProxyGroupType(proxy.Type()) && depth < 32; depth++ {
+			next := proxy.Unwrap(&constant.Metadata{}, false)
+			if next == nil {
+				return result
+			}
+			proxy = next
+		}
+		delay, err = tcpConnectDelay(ctx, proxy.Addr())
+	} else {
+		delay, err = proxy.URLTest(ctx, url, anyDelayTestStatus)
+	}
 	if err != nil {
 		delay = 0
 	}
 	result.Value = delayValue(delay, ctx.Err() != nil)
 	return result
+}
+
+func tcpConnectDelay(ctx context.Context, address string) (uint16, error) {
+	if address == "" {
+		return 0, errors.New("proxy has no TCP endpoint")
+	}
+	start := time.Now()
+	conn, err := dialer.DialContext(ctx, "tcp", address)
+	if err != nil {
+		return 0, err
+	}
+	elapsed := time.Since(start).Milliseconds()
+	_ = conn.Close()
+	return uint16(max(1, min(elapsed, 65535))), nil
 }

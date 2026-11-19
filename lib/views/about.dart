@@ -85,43 +85,45 @@ class AboutView extends ConsumerWidget {
               );
             },
           ),
-          const SizedBox(height: 8),
-          generateSection(
-            title: appLocalizations.more,
-            items: [
-              _buildLinkItem(
-                glyph: AppGlyphs.code,
-                title: appLocalizations.project,
-                url: 'https://github.com/$repository',
-                label: 'github.com/$repository',
-              ),
-              _buildLinkItem(
-                glyph: AppGlyphs.cpu,
-                title: appLocalizations.core,
-                url: 'https://github.com/chen08209/Clash.Meta/tree/FlClash',
-                label: 'github.com/chen08209/Clash.Meta',
-              ),
-              _buildLinkItem(
-                glyph: AppGlyphs.send,
-                title: 'Telegram',
-                url: 'https://t.me/FlClash',
-                label: 't.me/FlClash',
-              ),
-            ],
-          ),
-          generateSection(
-            title: appLocalizations.otherContributors,
-            items: [
-              for (final contributor in _contributors)
-                ListItem(
-                  leading: CircleAvatar(
-                    foregroundImage: AssetImage(contributor.avatar),
-                  ),
-                  title: Text(contributor.name),
-                  subtitle: Text(appLocalizations.appIconDesign),
+          if (!system.isWindows) ...[
+            const SizedBox(height: 8),
+            generateSection(
+              title: appLocalizations.more,
+              items: [
+                _buildLinkItem(
+                  glyph: AppGlyphs.code,
+                  title: appLocalizations.project,
+                  url: 'https://github.com/$repository',
+                  label: 'github.com/$repository',
                 ),
-            ],
-          ),
+                _buildLinkItem(
+                  glyph: AppGlyphs.cpu,
+                  title: appLocalizations.core,
+                  url: 'https://github.com/chen08209/Clash.Meta/tree/FlClash',
+                  label: 'github.com/chen08209/Clash.Meta',
+                ),
+                _buildLinkItem(
+                  glyph: AppGlyphs.send,
+                  title: 'Telegram',
+                  url: 'https://t.me/FlClash',
+                  label: 't.me/FlClash',
+                ),
+              ],
+            ),
+            generateSection(
+              title: appLocalizations.otherContributors,
+              items: [
+                for (final contributor in _contributors)
+                  ListItem(
+                    leading: CircleAvatar(
+                      foregroundImage: AssetImage(contributor.avatar),
+                    ),
+                    title: Text(contributor.name),
+                    subtitle: Text(appLocalizations.appIconDesign),
+                  ),
+              ],
+            ),
+          ],
         ],
       ),
     );

@@ -238,8 +238,12 @@ class SetupAction extends _$SetupAction {
     if (!_isCurrent(request)) {
       return true;
     }
-    resetCoreTraffic();
-    ref.read(commonActionProvider.notifier).clearTrafficStatistics();
+    if (system.isWindows) {
+      ref.read(trafficsProvider.notifier).clear();
+    } else {
+      resetCoreTraffic();
+      ref.read(commonActionProvider.notifier).clearTrafficStatistics();
+    }
     // A silent Core is gone or hung; running again would proxy traffic to it.
     if (!answered) {
       throw _unanswered(CoreMethod.stopListener);
