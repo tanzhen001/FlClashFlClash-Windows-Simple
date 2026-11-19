@@ -309,7 +309,7 @@ void main() {
       expect(container.read(isStartProvider), isFalse);
       expect(container.read(runTimeProvider), isNull);
       expect(container.read(runningVpnOptionsProvider), isNull);
-      expect(action.trafficResets, 1);
+      expect(action.trafficResets, Platform.isWindows ? 0 : 1);
     });
 
     test(
@@ -330,7 +330,7 @@ void main() {
   });
 
   group('stop cleanup', () {
-    test('resets traffic counters', () async {
+    test('preserves Windows totals while clearing speed samples', () async {
       markInitialized();
       await container.read(setupActionProvider.notifier).setRunning(true);
       container.read(totalTrafficProvider.notifier).value = const Traffic(
@@ -340,9 +340,12 @@ void main() {
 
       await container.read(setupActionProvider.notifier).setRunning(false);
 
-      expect(action.trafficResets, 1);
+      expect(action.trafficResets, Platform.isWindows ? 0 : 1);
       expect(container.read(trafficsProvider).list, isEmpty);
-      expect(container.read(totalTrafficProvider), const Traffic());
+      expect(
+        container.read(totalTrafficProvider),
+        Platform.isWindows ? const Traffic(up: 10, down: 20) : const Traffic(),
+      );
       expect(container.read(runTimeProvider), isNull);
     });
   });
@@ -2013,3 +2016,4 @@ void main() {
     );
   });
 }
+
