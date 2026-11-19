@@ -241,7 +241,7 @@ void main() {
     expect(find.byType(CommonPopupMenu), findsNothing);
   });
 
-  testWidgets('about view renders version and link sections', (tester) async {
+  testWidgets('about view keeps links hidden on Windows', (tester) async {
     final container = _containerFor(tester);
 
     await tester.pumpWidget(
@@ -253,7 +253,11 @@ void main() {
     await tester.pump();
 
     expect(find.byType(AboutView), findsOneWidget);
-    expect(find.text('Telegram'), findsOneWidget);
+    expect(find.text('Telegram'), Platform.isWindows ? findsNothing : findsOneWidget);
+    if (Platform.isWindows) {
+      expect(find.text('June2'), findsNothing);
+      expect(find.text('Arue'), findsNothing);
+    }
     final hero = find.byWidgetPredicate(
       (widget) => widget.runtimeType.toString() == '_AboutHero',
     );
